@@ -1,0 +1,50 @@
+{
+  "summary": "Full backend + frontend E2E of AmanziAlert against real Supabase project. Backend: 34/34 pytest pass (auth 401s, sites/nodes/twin CRUD, simulate PIPE_BURST/MICRO_LEAK, dedupe trigger, ZAR loss=(flow-expected)*tariff, dispatch/resolve -> node ONLINE, ingest key rotate + 202/401/404/422, cross-tenant EUI 404, team add/role/remove, VIEWER 403 on /simulate & POST /sites, Msunduzi token 404 on Highveld incident/node/site, /platform/orgs 403, org tariff & alert settings roundtrip). Frontend: login error + login, dashboard KPIs (6/6, R0), Live stream indicator, 6 node cards, simulator injections (burst on HV-006, micro leak on HV-005, pump trip on HV-004) -> toasts + realtime feed/KPIs (R 559/h, 3 open, 2 critical) without reload, node statuses CRITICAL/WARNING, incidents filters, dispatch dialog (technician shown), resolve via confirm (all nodes back ONLINE), node detail 4 charts update live, twin edit save/restore, sites add/delete site+node, settings tariff/alerts/ingest key/team, platform tenant create, Msunduzi isolation (2 SIM-MW nodes, no Platform nav, /platform -> /, Highveld node URL -> not-found), mobile nav sheet. Critical emails sent (4 x 202 from Emergent email API). One reproducible UI race bug in Alerts switch, plus a node-status logic issue and minor design issues.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "DB trigger process_telemetry_twin (MICRO_LEAK branch)", "issue": "A MEDIUM MICRO_LEAK reading sets sensor_nodes.status='WARNING' even when the node already has an open CRITICAL incident (e.g. PIPE_BURST). Verified: node went CRITICAL -> WARNING. The status UPDATE also runs when the dedupe trigger suppresses the insert. Node status should be the max severity of its open incidents."},
+      {"endpoint": "POST /api/incidents/{id}/resolve", "issue": "When other incidents stay open, node status is left as-is rather than recomputed from the remaining open incidents' severity (e.g. resolve the CRITICAL burst while a MEDIUM leak is open -> status should become WARNING)."},
+      {"endpoint": "simulator._email_pass", "issue": "Uses INSERT ... ON CONFLICT DO NOTHING and then sends the email anyway. With more than one backend worker/instance the same incident can be emailed twice. Use INSERT ... ON CONFLICT DO NOTHING RETURNING and send only if a row was claimed."},
+      {"endpoint": "simulator._reservoir (in-memory)", "issue": "Reservoir level is re-randomised on every backend restart, so the reservoir chart jumps (seen ~22:28). Seed it from latest_telemetry at startup."},
+      {"endpoint": "POST /api/nodes", "issue": "A new node with no telemetry gets status ONLINE and a last_ping of NOW() (UI shows 'ONLINE · 2s ago' with empty charts). It should show something like 'awaiting first reading'."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Settings > Alerts (AlertsTab.jsx)", "issue": "Race condition, reproduced. The GET /org/alert-settings effect has no stale/abort guard, and StrictMode fires it twice. If the user toggles before the second GET resolves, the late response puts the switch back to its old value. In the test, click 1 sent PUT {false} but the switch still showed 'checked'; click 2 sent PUT {false} again and the switch went 'unchecked'. The switch can end up out of sync with the backend, and the backend was left with email alerts OFF until I restored it. Fix: add an `ignore` flag in the effect cleanup (or AbortController), and/or compute the new value from the previous state.", "selector": "[data-testid='email-alerts-switch']", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Sites & nodes", "issues": ["The delete-node trash icon (absolute bottom-2 right-2) sits on top of the 'Xs ago' timestamp on every node card", "Confirm dialog closes right away, and site delete takes ~1.5s with no loading indicator, so the panel seems to linger"]},
+      {"screen": "Node detail", "issues": ["Pump power chart Y-axis labels are clipped (shows '1.05' instead of '11.05'). Increase YAxis width.", "Each chart fills only ~60% of its panel, leaving empty space below", "New node with no telemetry shows 4 empty charts with no empty-state message"]},
+      {"screen": "Settings > Device ingest", "issues": ["While loading it shows 'No key yet' and a 'Generate key' label before the real key status arrives. Add a loading state."]},
+      {"screen": "Sidebar", "issues": ["Tenant name is truncated ('Highveld Agro-Processing (...') with no tooltip/title"]},
+      {"screen": "Global toasts", "issues": ["Stacked toasts cover the top-right 'R x/h at risk' badge and the nodes counter"]},
+      {"screen": "Mobile incidents (390px)", "issues": ["Table headers wrap into 3 lines ('COST SO FAR') and the table scrolls sideways. A card layout on mobile would read better."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_amanzi_api.py", "/app/backend/tests/conftest.py", "/app/backend/tests/cleanup_test_data.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix AlertsTab fetch race (ignore stale GET responses in effect cleanup); also add a loading state to DevicesTab",
+    "Node status should be the max severity of open incidents: do not downgrade CRITICAL to WARNING in the MICRO_LEAK trigger branch; recompute status on resolve",
+    "Make email notification claiming atomic (INSERT ... RETURNING) to avoid duplicate emails",
+    "Move the node-card delete icon so it doesn't overlap the timestamp; widen chart Y-axis; add an empty state for nodes with no telemetry",
+    "Clean up test tenant created via the Platform UI: org id e3cc3bed-b921-47be-9a4f-6b781043621c (TEST_Tenant_UI) plus its Supabase auth user/profile test_tenant_admin_ui01@example.com. No delete endpoint exists."
+  ],
+  "critical_code_review_comments": [
+    "process_telemetry_twin: the status UPDATE runs unconditionally, even when suppress_duplicate_incident drops the insert. This is fine for same-category readings but wrong across severities.",
+    "simulator._email_pass is not safe with multiple instances (no atomic claim).",
+    "OrgDataContext subscribes to telemetry_logs INSERT with no filter and relies only on RLS for realtime. Correct for Supabase RLS, but cross-tenant realtime isolation was not explicitly verified at websocket level.",
+    "Ingest: one key per org, and rotating it breaks every gateway at once. Consider allowing 2 active keys for zero-downtime rotation.",
+    "Platform: no tenant delete/suspend endpoint, so test or abandoned tenants can't be cleaned up from the UI.",
+    "Code quality is good: Pydantic validation everywhere, org scoping on every mutation (org_node/org_incident), proper 401/403/404/409/422 codes, env-driven config."
+  ],
+  "updated_files": ["/app/backend/tests/conftest.py", "/app/backend/tests/test_amanzi_api.py", "/app/backend/tests/cleanup_test_data.py"],
+  "success_rate": {"backend": "100% (34/34)", "frontend": "~95% (all requested flows work; 1 toggle race bug)"},
+  "seed_data_creation": "No persistent seed data except the TEST_Tenant_UI tenant (id e3cc3bed-b921-47be-9a4f-6b781043621c, admin test_tenant_admin_ui01@example.com / Tenant!2026x). All TEST_ sites/nodes/members were deleted and all opened incidents resolved; all 6 SIM-HV nodes are ONLINE. Tariff is back to 42.50, the twin edit on SIM-HV-001 is reverted, and email_critical_alerts is restored to TRUE. The Highveld ingest key was rotated during testing; the current active prefix is amz_28dAqe.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run backend tests with `cd /app/backend/tests && python -m pytest test_amanzi_api.py -n 0 -v`. They MUST run serially (-n 0) because pytest-xdist is the default and the tests share state. Each run creates and deletes its own TEST site/node/viewer and triggers 2 critical emails to the owner. `python cleanup_test_data.py [--delete] [--resolve]` lists/removes TEST_ leftovers. Get tokens via the Supabase password grant (see conftest.py). Email sending is visible in backend.err.log as 'email/send 202'.",
+  "rca of the issue": "Alerts switch: AlertsTab useEffect fires api.get with no cleanup. Under React.StrictMode it runs twice, and the supabase getSession interceptor makes the timing of each response unpredictable. When the user toggles after the first GET resolves (switch enabled) but before the second, the second response's setEmail(true) overwrites the optimistic setEmail(false). The next click then sends the same value again. Repro: open Settings > Alerts and click the switch as soon as it is enabled. Fix: `let ignore=false; ...then(d=>{if(!ignore) setEmail(...)}); return ()=>{ignore=true}`."
+}

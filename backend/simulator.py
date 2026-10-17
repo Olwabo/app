@@ -68,6 +68,9 @@ def clear_node(node_id):
 
 async def _tick():
     p = pool()
+    if not _reservoir:
+        for r in await p.fetch("SELECT node_id, reservoir_pct FROM latest_telemetry"):
+            _reservoir[str(r["node_id"])] = float(r["reservoir_pct"])
     nodes = await p.fetch(
         "SELECT n.id, n.battery_pct, t.expected_pressure_bar, t.expected_flow_m3h, t.min_reservoir_pct "
         "FROM sensor_nodes n JOIN digital_twin_profiles t ON t.node_id = n.id WHERE n.device_eui LIKE 'SIM-%'"
@@ -112,8 +115,11 @@ async def _email_pass():
     for inc in pending:
         admins = [r["email"] for r in await p.fetch(
             "SELECT email FROM profiles WHERE org_id = $1 AND role = 'ORG_ADMIN'", inc["org_id"])]
-        await p.execute("INSERT INTO incident_notifications (incident_id, recipients, status) VALUES ($1, $2, 'SENDING') "
-                        "ON CONFLICT DO NOTHING", inc["id"], ",".join(admins))
+        claimed = await p.fetchval(
+            "INSERT INTO incident_notifications (incident_id, recipients, status) VALUES ($1, $2, 'SENDING') "
+            "ON CONFLICT DO NOTHING RETURNING incident_id", inc["id"], ",".join(admins))
+        if not claimed:
+            continue
         subject, html = critical_incident_email(dict(inc))
         results = [await send_email(to=a, subject=subject, html=html) for a in admins]
         status = "SENT" if results and all(results) else ("NO_RECIPIENTS" if not admins else "FAILED")

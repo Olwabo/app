@@ -119,7 +119,7 @@ export default function Sites() {
                 <div key={n.id} className="relative">
                   <NodeCard node={n} />
                   {isAdmin && (
-                    <ConfirmButton variant="ghost" size="icon" className="absolute bottom-2 right-2 h-6 w-6 text-slate-600 hover:bg-red-500/10 hover:text-red-400"
+                    <ConfirmButton variant="ghost" size="icon" className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-slate-700 bg-slate-900 text-slate-500 hover:bg-red-500/10 hover:text-red-400"
                       testid={`delete-node-${n.device_eui}`} title={`Remove ${n.label}?`} description="Telemetry and incidents for this node are deleted." confirmLabel="Remove node"
                       onConfirm={() => del(`/nodes/${n.id}`, "Node removed")}><Trash2 className="h-3 w-3" /></ConfirmButton>
                   )}

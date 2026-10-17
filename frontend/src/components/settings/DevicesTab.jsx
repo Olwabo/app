@@ -11,7 +11,11 @@ export default function DevicesTab() {
   const [fresh, setFresh] = useState(null);
   const load = () => api.get("/org/ingest-key").then(({ data }) => setInfo(data));
   useEffect(() => {
-    load();
+    let ignore = false;
+    api.get("/org/ingest-key").then(({ data }) => !ignore && setInfo(data));
+    return () => {
+      ignore = true;
+    };
   }, []);
   const rotate = async () => {
     try {
@@ -38,10 +42,10 @@ export default function DevicesTab() {
           <div className="flex-1">
             <p className="font-semibold">Gateway ingest key</p>
             <p className="text-sm text-slate-400" data-testid="ingest-key-status">
-              {info?.exists ? `Active key ${info.key_prefix}… created ${dateTime(info.created_at)}` : "No key yet. Generate one for your ESP32 / Modbus gateways."}
+              {!info ? "Loading…" : info.exists ? `Active key ${info.key_prefix}… created ${dateTime(info.created_at)}` : "No key yet. Generate one for your ESP32 / Modbus gateways."}
             </p>
           </div>
-          <ConfirmButton testid="rotate-ingest-key-btn" title={info?.exists ? "Rotate ingest key?" : "Generate ingest key?"}
+          <ConfirmButton testid="rotate-ingest-key-btn" disabled={!info} title={info?.exists ? "Rotate ingest key?" : "Generate ingest key?"}
             description={info?.exists ? "The current key stops working immediately. Update every gateway." : "The key is shown only once."}
             confirmLabel="Generate" onConfirm={rotate}>{info?.exists ? "Rotate key" : "Generate key"}</ConfirmButton>
         </div>

@@ -9,7 +9,13 @@ export default function AlertsTab() {
   const { isAdmin } = useAuth();
   const [email, setEmail] = useState(null);
   useEffect(() => {
-    api.get("/org/alert-settings").then(({ data }) => setEmail(data.email_critical_alerts)).catch(() => setEmail(true));
+    let ignore = false;
+    api.get("/org/alert-settings")
+      .then(({ data }) => !ignore && setEmail(data.email_critical_alerts))
+      .catch(() => !ignore && setEmail(true));
+    return () => {
+      ignore = true;
+    };
   }, []);
   const toggle = async (v) => {
     setEmail(v);

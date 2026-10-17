@@ -276,10 +276,12 @@ async def resolve_incident(incident_id: uuid.UUID, user: dict = Depends(OPS)):
     async with pool().acquire() as c, c.transaction():
         r = await c.fetchrow("UPDATE incident_alerts SET status = 'RESOLVED', resolved_at = NOW() WHERE id = $1 RETURNING *",
                              incident_id)
-        still_open = await c.fetchval(
-            "SELECT COUNT(*) FROM incident_alerts WHERE node_id = $1 AND status <> 'RESOLVED'", inc["node_id"])
-        if not still_open:
-            await c.execute("UPDATE sensor_nodes SET status = 'ONLINE' WHERE id = $1 AND status <> 'OFFLINE'", inc["node_id"])
+        worst = await c.fetchval(
+            "SELECT MAX(CASE severity WHEN 'CRITICAL' THEN 3 WHEN 'MEDIUM' THEN 2 ELSE 1 END) FROM incident_alerts "
+            "WHERE node_id = $1 AND status <> 'RESOLVED'", inc["node_id"])
+        still_open = worst is not None
+        new_status = {3: "CRITICAL", 2: "WARNING"}.get(worst, "ONLINE")
+        await c.execute("UPDATE sensor_nodes SET status = $1 WHERE id = $2 AND status <> 'OFFLINE'", new_status, inc["node_id"])
     if not still_open:
         simulator.clear_node(inc["node_id"])
     return row(r)

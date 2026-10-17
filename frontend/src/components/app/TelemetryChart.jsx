@@ -23,12 +23,17 @@ export default function TelemetryChart({ title, unit, data, color, band, refs = 
           {current ?? "--"} <span className="text-xs text-slate-500">{unit}</span>
         </p>
       </div>
-      <div className="h-48">
+      <div className="relative h-56">
+        {rows.length === 0 && (
+          <p className="absolute inset-0 z-10 flex items-center justify-center font-mono text-xs text-slate-500" data-testid={`${testid}-empty`}>
+            Awaiting first reading…
+          </p>
+        )}
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={rows} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="t" tickLine={false} axisLine={false} minTickGap={40} />
-            <YAxis tickLine={false} axisLine={false} domain={["auto", "auto"]} width={48} />
+            <YAxis tickLine={false} axisLine={false} domain={["auto", "auto"]} width={60} />
             <Tooltip content={<TooltipBox unit={unit} />} />
             {band && <Area dataKey="band" stroke="#00E5FF" strokeOpacity={0.35} strokeDasharray="4 4" fill="rgba(56,189,248,0.12)" isAnimationActive={false} />}
             {refs.map((r) => (
