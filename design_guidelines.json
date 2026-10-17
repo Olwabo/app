@@ -1,0 +1,91 @@
+{
+  "project_name": "AmanziAlert",
+  "app_type": "industrial_iot_saas_dashboard",
+  "theme": "dark_tactical_command_center",
+  "context": "Industrial Water Telemetry and Digital Twin Early-Warning Platform for Commercial Enterprises & Public Utilities in South Africa",
+  "typography": {
+    "headings_font": "Outfit, Barlow Condensed, sans-serif",
+    "body_font": "IBM Plex Sans, -apple-system, BlinkMacSystemFont, sans-serif",
+    "mono_font": "JetBrains Mono, Source Code Pro, monospace",
+    "forbidden_fonts": ["space grotesk", "Inter"],
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold tracking-normal",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-sm sm:text-base leading-relaxed",
+      "telemetry_metric": "font-mono text-3xl sm:text-4xl font-bold tracking-tighter"
+    }
+  },
+  "colors": {
+    "archetype": "THE PERFORMANCE PRO & INDUSTRIAL TACTICAL",
+    "base": {
+      "background": "#070B12",
+      "surface": "#0F172A",
+      "surface_elevated": "#1E293B",
+      "surface_card": "#0B132B",
+      "border": "#1E293B",
+      "border_highlight": "#334155"
+    },
+    "text": {
+      "primary": "#F8FAFC",
+      "secondary": "#94A3B8",
+      "muted": "#64748B",
+      "inverse": "#020617"
+    },
+    "brand_and_telemetry": {
+      "primary_cyan": "#00E5FF",
+      "primary_cyan_hover": "#00B8D4",
+      "water_blue": "#0284C7",
+      "water_flow": "#38BDF8",
+      "digital_twin_baseline_band": "rgba(56, 189, 248, 0.15)",
+      "digital_twin_stroke": "#00E5FF",
+      "warning_amber": "#F59E0B",
+      "critical_red": "#EF4444",
+      "online_emerald": "#10B981",
+      "offline_slate": "#64748B"
+    },
+    "forbidden_colors": ["#1B93A4", "#7351B7"]
+  },
+  "layout_and_spacing": {
+    "mode": "High Density Precision Grid (SCADA / Command Center Style)",
+    "container_padding": "p-4 md:p-6 lg:p-8",
+    "gap_strategy": "gap-4 md:gap-6",
+    "header_nav": "Sticky header with backdrop-blur-xl bg-slate-950/80 border-b border-slate-800 z-50",
+    "card_style": "Cardless or sharp 1px border container with rounded-md bg-slate-900/90 border-slate-800 p-5 shadow-inner opacity-95 hover:border-slate-700 transition-colors"
+  },
+  "motion_and_interactions": {
+    "lenis_smooth_scroll": false,
+    "hover_states": "All buttons, rows, node cards have explicit transition-all duration-200 with hover:bg-slate-800 hover:text-white",
+    "realtime_pulse": "Live stream indicator pulsing green dot (animate-pulse) or flashing red badge on burst detection",
+    "reduced_motion": "Respect prefers-reduced-motion CSS queries"
+  },
+  "accessibility": {
+    "wcag_target": "AA",
+    "data_testid_policy": "MANDATORY on all interactive buttons, inputs, tables, select boxes, tabs, simulator controls, and node detail links in kebab-case format.",
+    "hover_text_contrast": "Always explicitly define hover text colors (e.g. hover:bg-cyan-500 hover:text-slate-950)."
+  },
+  "image_urls": {
+    "control_room_hero": "https://images.pexels.com/photos/32529341/pexels-photo-32529341.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "water_pump_station": "https://images.unsplash.com/photo-1693463735697-73df1f35930d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDZ8MHwxfHNlYXJjaHwyfHxpbmR1c3RyaWFsJTIwd2F0ZXIlMjB0ZWxlbWV0cnklMjBwdW1wJTIwc3RhdGlvbiUyMGNvbnRyb2wlMjByb29tJTIwZGlnaXRhbCUyMHR3aW58ZW58MHx8fHwxNzkyMjc1MDc1fDA&ixlib=rb-4.1.0&q=85",
+    "industrial_pipe_telemetry": "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDZ8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwd2F0ZXIlMjB0ZWxlbWV0cnklMjBwdW1wJTIwc3RhdGlvbiUyMGNvbnRyb2wlMjByb29tJTIwZGlnaXRhbCUyMHR3aW58ZW58MHx8fHwxNzkyMjc1MDc1fDA&ixlib=rb-4.1.0&q=85",
+    "underground_water_pipe": "https://images.unsplash.com/photo-1693907986952-3cd372e4c9d8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwxfHx3YXRlciUyMGluZnJhc3RydWN0dXJlJTIwcGlwZSUyMHByZXNzdXJlJTIwdGVsZW1ldHJ5JTIwc2Vuc29yJTIwbm9kZXxlbnwwfHx8fDE3OTIyNzUwNzl8MA&ixlib=rb-4.1.0&q=85",
+    "historical_water_plant": "https://images.pexels.com/photos/30099838/pexels-photo-30099838.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "component_path": "/app/frontend/src/components",
+  "instructions_to_main_agent": [
+    "Build a high-performance industrial telemetry & Digital Twin early warning dashboard named AmanziAlert.",
+    "Target environment: Dark mode Command Center (#070B12 background, #0F172A surfaces, #00E5FF cyan electric highlights).",
+    "Use Recharts or Lucide/Shadcn charts for rendering telemetry streams (Pressure bar, Flow m3/h, Reservoir %, Pump power kW) with shaded baseline tolerance bands representing Digital Twin expected values.",
+    "Display financial water loss in ZAR (South African Rand) dynamically calculated based on water loss m3/h * tariff ZAR/kL.",
+    "Provide demo Scenario Simulator (Pipe Burst, Micro Leak, Pump Trip) that injects realistic anomalies into the realtime telemetry stream and triggers Sonner toasts + incident generation.",
+    "Include org settings for tariff configuration and load shedding stage alert toggles.",
+    "Ensure all interactive elements have data-testid attributes."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never use generic centered layouts or plain white backgrounds for this industrial IoT dashboard.",
+    "DO NOT use forbidden font 'space grotesk' or forbidden colors (#1B93A4 or #7351B7). Use Outfit/IBM Plex Sans with Cyan/Amber/Red accents.",
+    "Add data-testid to every button, modal input, tab, select item, and row action.",
+    "Use sonner for realtime alert toasts (Pipe Burst, Pump Trip, Micro Leak warnings)."
+  ]
+}
