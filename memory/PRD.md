@@ -28,6 +28,11 @@ Platform owner (onboards tenants), Org admin (settings, team, twins, assets), Op
 - Removed every Rand cost display: KPI tile, top bar, incident table columns, feed, toasts, alert email, tariff inputs in Settings and Platform, dashboard tariff line. The DB columns and trigger are unchanged (tariff stays at its stored value).
 - Removed "(Demo)" from org and user names in the DB and the seed; the simulator copy now says "Simulated meters".
 
+## Update (2026-10-18, c) — hackathon polish
+- Overview: live site map (react-leaflet, Esri dark tiles, markers coloured by worst status, tooltip, click opens meter), a flow sparkline on every meter card, and a "Readings checked today" KPI that ticks up live.
+- Fix: meters marked OFFLINE now go back to their real status once they report again (maintenance loop).
+- Browser tab title/description set to AmanziAlert; dark map tooltip; chart grid spacing. Iteration 3: frontend 100%.
+
 ## Backlog
 - P1: RESERVOIR_LOW and AFTER_HOURS_LEAK detection (twin fields exist, trigger doesn't use them yet)
 - P1: Tenant suspend/delete on Platform page; dual ingest keys for zero-downtime rotation

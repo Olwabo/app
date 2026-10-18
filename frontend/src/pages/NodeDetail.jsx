@@ -89,7 +89,7 @@ export default function NodeDetail() {
         </div>
       </div>
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid content-start gap-4 md:grid-cols-2">
           <TelemetryChart title="Pressure" unit="bar" color="#7dd3fc" data={series.p} testid="chart-pressure"
             band={twin ? [ep * (1 - tol), ep * (1 + tol)] : null} current={num(last?.pressure_bar, 2)}
             refs={twin ? [{ y: ep * 0.7, label: "burst level", color: "#EF4444" }] : []} />

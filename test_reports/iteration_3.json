@@ -1,0 +1,31 @@
+{
+  "summary": "Frontend-only test of the hackathon polish. Everything requested works: 4 KPI tiles render and readings-today goes up live (3,767 -> 3,780 in 25s); the Esri dark map loads 20/20 tiles with 3 site markers coloured by worst status (amber = Main Processing Plant, green x2); hovering a marker shows the tooltip with site name, location, meter count and status; clicking a marker opens /nodes/<id>; all 6 spark-SIM-HV-00x sparklines render as SVG and update live; meters show Normal (5) and Warning (Cooling Tower Feed), none Offline, 6/6 reporting; no 'Demo' or Rand/R/ZAR amounts on Overview, Incidents, Sites, Settings (all 4 tabs), Platform, Test scenarios or meter detail; at 390px nothing overflows horizontally (scrollWidth 390) and KPIs, map and cards stack; operator and viewer logins reach the overview and the viewer has no Platform nav. No page errors. Found 3 small design issues.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Overview map tooltip", "issues": ["The .amz-tip dark style is overridden by leaflet.css (same specificity, leaflet.css loads later). The computed background is rgb(255,255,255), so the tooltip shows as a default white box on the dark map. Fix: use the selector '.leaflet-tooltip.amz-tip' (and '.leaflet-tooltip-top.amz-tip::before') in App.css."]},
+      {"screen": "Browser tab", "issues": ["document.title is 'Emergent | Fullstack App'. Set it to 'AmanziAlert' in public/index.html for the judges."]},
+      {"screen": "Meter detail charts", "issues": ["Each chart card has about 70-80px of empty space under the chart. Make the chart taller or the card shorter."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Raise the specificity of .amz-tip so the dark map tooltip style applies",
+    "Change the page title from 'Emergent | Fullstack App' to AmanziAlert",
+    "Optional: remove the empty space under the charts on the meter detail page"
+  ],
+  "critical_code_review_comments": [
+    "OrgDataContext refresh(): the initial trends from the last 8 min are not sliced to TREND_MAX (48), while the live appends are. The sparkline length changes after the first live point. Minor.",
+    "readingsToday uses count:'estimated'. On large tables the Postgres estimate can be stale or rounded, so the tile may jump on refresh. Use 'exact' if accuracy matters.",
+    "The SiteMap marker click goes to the site's first meter only. This is fine but could be a site view.",
+    "The _maintenance OFFLINE->status recovery runs every 60s, so a meter that reconnects can show Offline for up to about 60s."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "skipped", "frontend": "100% functional (3 minor design issues)"},
+  "seed_data_creation": "None. No data was created and the MEDIUM incident on Cooling Tower Feed was left alone.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "The Overview nav testid is nav-dashboard. Meter cards are node-card-<EUI>, status is node-status-<EUI>, sparklines are spark-<EUI> (svg with a polyline). Map markers are '[data-testid=site-map] path.leaflet-interactive'. KPI values are <kpi-testid>-value."
+}

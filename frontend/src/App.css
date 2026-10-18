@@ -5,7 +5,7 @@
 .leaflet-control-attribution { background: rgba(13, 17, 23, 0.8) !important; color: #64748b !important; font-size: 10px; }
 .leaflet-control-attribution a { color: #94a3b8 !important; }
 .leaflet-bar a { background: #151a22 !important; color: #cbd5e1 !important; border-color: #252b36 !important; }
-.amz-tip { background: #151a22; color: #e2e8f0; border: 1px solid #2d3440; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.4); font-size: 12px; line-height: 1.5; }
-.amz-tip::before { border-top-color: #2d3440 !important; }
+.leaflet-tooltip.amz-tip { background: #151a22; color: #e2e8f0; border: 1px solid #2d3440; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.4); font-size: 12px; line-height: 1.5; }
+.leaflet-tooltip-top.amz-tip::before { border-top-color: #2d3440 !important; }
 @keyframes mapPulse { 0%, 100% { stroke-opacity: 1; } 50% { stroke-opacity: 0.25; } }
 .map-pulse { animation: mapPulse 1.6s ease-in-out infinite; }
