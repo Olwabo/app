@@ -12,22 +12,22 @@ logger = logging.getLogger("amanzi.seed")
 
 DEMO_ORGS = [
     {
-        "name": "Highveld Agro-Processing", "sector": "MANUFACTURING", "tariff": 42.50,
+        "name": "Eastern Cape Agro-Processing", "sector": "MANUFACTURING", "tariff": 42.50,
         "users": [("OWNER_EMAIL", "OWNER_PASSWORD", "Platform Owner", "ORG_ADMIN", True),
-                  ("HV_OPERATOR_EMAIL", "HV_OPERATOR_PASSWORD", "Highveld Operator", "OPERATOR", False),
-                  ("HV_VIEWER_EMAIL", "HV_VIEWER_PASSWORD", "Highveld Viewer", "VIEWER", False)],
+                  ("HV_OPERATOR_EMAIL", "HV_OPERATOR_PASSWORD", "Eastern Cape Operator", "OPERATOR", False),
+                  ("HV_VIEWER_EMAIL", "HV_VIEWER_PASSWORD", "Eastern Cape Viewer", "VIEWER", False)],
         "sites": [
-            ("Main Processing Plant", "Middelburg, Mpumalanga", -25.775, 29.464, [
-                ("SIM-HV-001", "Pump Station Inlet", 5.2, 85.0),
-                ("SIM-HV-002", "Process Line Manifold", 4.5, 60.0),
-                ("SIM-HV-003", "Cooling Tower Feed", 3.8, 42.0),
+            ("Main Processing Plant", "Gqeberha, Eastern Cape", -33.9608, 25.6022, [
+                ("SIM-EC-001", "Pump Station Inlet", 5.2, 85.0),
+                ("SIM-EC-002", "Process Line Manifold", 4.5, 60.0),
+                ("SIM-EC-003", "Cooling Tower Feed", 3.8, 42.0),
             ]),
-            ("Irrigation Reservoir Block", "Groblersdal, Limpopo", -25.169, 29.398, [
-                ("SIM-HV-004", "Reservoir Outlet Main", 6.0, 120.0),
-                ("SIM-HV-005", "Pivot Irrigation Header", 4.2, 75.0),
+            ("Irrigation Reservoir Block", "East London, Eastern Cape", -33.0153, 27.9116, [
+                ("SIM-EC-004", "Reservoir Outlet Main", 6.0, 120.0),
+                ("SIM-EC-005", "Pivot Irrigation Header", 4.2, 75.0),
             ]),
-            ("Head Office Campus", "Sandton, Johannesburg", -26.107, 28.056, [
-                ("SIM-HV-006", "Campus Ring Main", 3.5, 18.0),
+            ("Head Office Campus", "Mthatha, Eastern Cape", -31.5889, 28.7844, [
+                ("SIM-EC-006", "Campus Ring Main", 3.5, 18.0),
             ]),
         ],
     },

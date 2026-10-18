@@ -33,6 +33,10 @@ Platform owner (onboards tenants), Org admin (settings, team, twins, assets), Op
 - Fix: meters marked OFFLINE now go back to their real status once they report again (maintenance loop).
 - Browser tab title/description set to AmanziAlert; dark map tooltip; chart grid spacing. Iteration 3: frontend 100%.
 
+## Update (2026-10-18, d)
+- Map now uses Mapbox (dark-v11 style raster tiles via Leaflet, token in REACT_APP_MAPBOX_TOKEN). mapbox-gl/react-map-gl could not be installed: a dependency requires Node >= 22 (server has 20).
+- Org renamed to "Eastern Cape Agro-Processing"; sites moved to Gqeberha, East London, Mthatha; meters SIM-EC-001..006; operator/viewer logins renamed to operator.easterncape@example.com / viewer.easterncape@example.com (same passwords).
+
 ## Backlog
 - P1: RESERVOIR_LOW and AFTER_HOURS_LEAK detection (twin fields exist, trigger doesn't use them yet)
 - P1: Tenant suspend/delete on Platform page; dual ingest keys for zero-downtime rotation

@@ -34,10 +34,11 @@ export default function SiteMap() {
         </div>
       </div>
       <div className="h-[340px]">
-        <MapContainer center={center} zoom={points.length > 1 ? 6 : 8} scrollWheelZoom={false} className="h-full w-full" attributionControl>
-          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            attribution="Tiles &copy; Esri" maxZoom={16} />
-          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}" maxZoom={16} />
+        <MapContainer center={center} zoom={points.length > 1 ? 7 : 9} scrollWheelZoom={false} className="h-full w-full" attributionControl>
+          <TileLayer
+            url={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
+            tileSize={512} zoomOffset={-1} maxZoom={18}
+            attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
           {points.map((p) => (
             <CircleMarker key={p.id} center={[p.lat, p.lng]} radius={p.worst === "CRITICAL" ? 13 : 10}
               pathOptions={{ color: COLOR[p.worst], fillColor: COLOR[p.worst], fillOpacity: 0.35, weight: 2 }}
