@@ -1,6 +1,3 @@
-import { Link } from "react-router-dom";
-import { FlaskConical } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOrgData } from "@/context/OrgDataContext";
 import { useAuth } from "@/context/AuthContext";
@@ -12,19 +9,13 @@ import SiteMap from "@/components/app/SiteMap";
 
 export default function Dashboard() {
   const { loading } = useOrgData();
-  const { canOperate, profile } = useAuth();
+  const { profile } = useAuth();
   const h = new Date().getHours();
   const hello = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
   const today = new Date().toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" });
   return (
     <div data-testid="dashboard-page">
-      <PageHeader eyebrow={today} title={/owner|operator|viewer|admin/i.test(profile.full_name) ? hello : `${hello}, ${profile.full_name.split(" ")[0]}`}>
-        {canOperate && (
-          <Button asChild variant="outline" className="gap-2 border-[#2d3440] bg-transparent" data-testid="dashboard-simulator-link">
-            <Link to="/simulator"><FlaskConical className="h-4 w-4" /> Test a scenario</Link>
-          </Button>
-        )}
-      </PageHeader>
+      <PageHeader eyebrow={today} title={/owner|operator|viewer|admin/i.test(profile.full_name) ? hello : `${hello}, ${profile.full_name.split(" ")[0]}`} />
       {loading ? (
         <div className="grid gap-4 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28 bg-[#151a22]" />)}</div>
       ) : (
