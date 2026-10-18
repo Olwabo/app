@@ -22,7 +22,7 @@ export default function IncidentFeed({ limit = 8 }) {
           <p className="text-xs text-slate-500">New leaks, bursts and pump trips will show up here.</p>
         </div>
       ) : (
-        <ul className="divide-y divide-[#252b36]">
+        <ul className="max-h-[340px] divide-y divide-[#252b36] overflow-y-auto">
           {open.map((inc) => (
             <li key={inc.id} className={`rise px-5 py-4 ${inc.severity === "CRITICAL" ? "bg-red-500/[0.04]" : ""}`} data-testid={`feed-incident-${inc.id}`}>
               <div className="flex items-center gap-2">

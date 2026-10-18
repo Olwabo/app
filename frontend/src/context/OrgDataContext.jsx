@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { isOpen, num } from "@/lib/format";
 
 const OrgCtx = createContext(null);
+const TREND_MAX = 48;
 
 const upsert = (list, item) =>
   list.some((x) => x.id === item.id) ? list.map((x) => (x.id === item.id ? item : x)) : [item, ...list];
@@ -18,6 +19,8 @@ export function OrgDataProvider({ children }) {
   const [twins, setTwins] = useState({});
   const [incidents, setIncidents] = useState([]);
   const [latest, setLatest] = useState({});
+  const [trends, setTrends] = useState({});
+  const [readingsToday, setReadingsToday] = useState(null);
   const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(true);
   const listeners = useRef(new Set());
@@ -26,14 +29,25 @@ export function OrgDataProvider({ children }) {
 
   const refresh = useCallback(async () => {
     if (!orgId) return;
-    const [o, s, n, t, i, l] = await Promise.all([
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    const since = new Date(Date.now() - 8 * 60000).toISOString();
+    const [o, s, n, t, i, l, tr, cnt] = await Promise.all([
       supabase.from("organizations").select("*").eq("id", orgId).maybeSingle(),
       supabase.from("sites").select("*").order("created_at"),
       supabase.from("sensor_nodes").select("*").order("device_eui"),
       supabase.from("digital_twin_profiles").select("*"),
       supabase.from("incident_alerts").select("*").order("created_at", { ascending: false }).limit(300),
       supabase.from("latest_telemetry").select("*"),
+      supabase.from("telemetry_logs").select("id,node_id,flow_m3h,pressure_bar").gte("recorded_at", since).order("recorded_at").limit(2000),
+      supabase.from("telemetry_logs").select("id", { count: "estimated", head: true }).gte("recorded_at", midnight.toISOString()),
     ]);
+    const grouped = {};
+    (tr.data || []).forEach((r) => {
+      (grouped[r.node_id] ||= []).push(r);
+    });
+    setTrends(grouped);
+    setReadingsToday(cnt.count ?? null);
     setOrg(o.data);
     setSites(s.data || []);
     setNodes(n.data || []);
@@ -76,6 +90,8 @@ export function OrgDataProvider({ children }) {
       })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "telemetry_logs" }, (p) => {
         setLatest((prev) => ({ ...prev, [p.new.node_id]: p.new }));
+        setTrends((prev) => ({ ...prev, [p.new.node_id]: [...(prev[p.new.node_id] || []), p.new].slice(-TREND_MAX) }));
+        setReadingsToday((c) => (c === null ? c : c + 1));
         listeners.current.forEach((fn) => fn(p.new));
       })
       .subscribe((st) => setLive(st === "SUBSCRIBED"));
@@ -100,7 +116,7 @@ export function OrgDataProvider({ children }) {
     };
   }, [incidents, nodes]);
 
-  const value = { org, sites, nodes, twins, incidents, latest, live, loading, refresh, onTelemetry, kpis };
+  const value = { org, sites, nodes, twins, incidents, latest, trends, readingsToday, live, loading, refresh, onTelemetry, kpis };
   return <OrgCtx.Provider value={value}>{children}</OrgCtx.Provider>;
 }
 

@@ -98,6 +98,11 @@ async def _maintenance():
     p = pool()
     await p.execute("UPDATE sensor_nodes SET status = 'OFFLINE' "
                     "WHERE last_ping < NOW() - INTERVAL '10 minutes' AND status <> 'OFFLINE'")
+    await p.execute(
+        "UPDATE sensor_nodes n SET status = COALESCE((SELECT CASE MAX(CASE severity WHEN 'CRITICAL' THEN 3 WHEN 'MEDIUM' THEN 2 ELSE 1 END) "
+        "WHEN 3 THEN 'CRITICAL' WHEN 2 THEN 'WARNING' ELSE 'ONLINE' END FROM incident_alerts i "
+        "WHERE i.node_id = n.id AND i.status <> 'RESOLVED'), 'ONLINE') "
+        "WHERE n.status = 'OFFLINE' AND n.last_ping > NOW() - INTERVAL '10 minutes'")
     await p.execute("DELETE FROM telemetry_logs WHERE recorded_at < NOW() - INTERVAL '3 days' "
                     "AND node_id IN (SELECT id FROM sensor_nodes WHERE device_eui LIKE 'SIM-%')")
 

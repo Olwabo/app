@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Battery, Gauge, Power, Waves } from "lucide-react";
 import { useOrgData } from "@/context/OrgDataContext";
 import { NodeStatus } from "@/components/app/Badges";
+import Sparkline from "@/components/app/Sparkline";
 import { num, timeAgo } from "@/lib/format";
 
 function Metric({ icon: Icon, value, unit, off }) {
@@ -15,7 +16,8 @@ function Metric({ icon: Icon, value, unit, off }) {
 }
 
 export function NodeCard({ node }) {
-  const { latest, twins } = useOrgData();
+  const { latest, twins, trends } = useOrgData();
+  const flows = (trends[node.id] || []).map((r) => Number(r.flow_m3h));
   const t = latest[node.id];
   const twin = twins[node.id];
   const lowP = t && twin && Number(t.pressure_bar) < Number(twin.expected_pressure_bar) * 0.85;
@@ -36,7 +38,11 @@ export function NodeCard({ node }) {
         <Metric icon={Power} value={t ? (t.pump_active ? "RUN" : "TRIP") : "--"} unit={t ? `${num(t.pump_power_kw, 1)} kW` : ""} off={t && !t.pump_active} />
         <Metric icon={Battery} value={num(node.battery_pct, 0)} unit="%" />
       </div>
-      <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-[#252b36]">
+      <div className="mt-4">
+        <Sparkline values={flows} color={node.status === "CRITICAL" ? "#f87171" : node.status === "WARNING" ? "#fbbf24" : "#7dd3fc"} testid={`spark-${node.device_eui}`} />
+        <p className="mt-1 text-[11px] text-slate-600">Flow, last few minutes</p>
+      </div>
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[#252b36]">
         <div className="h-full rounded-full bg-sky-300/70 transition-[width] duration-700" style={{ width: `${t ? t.reservoir_pct : 0}%` }} />
       </div>
       <p className="mt-2 flex justify-between text-xs text-slate-500">

@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/app/Screens";
 import KpiStrip from "@/components/app/KpiStrip";
 import NodeGrid from "@/components/app/NodeGrid";
 import IncidentFeed from "@/components/app/IncidentFeed";
+import SiteMap from "@/components/app/SiteMap";
 
 export default function Dashboard() {
   const { loading } = useOrgData();
@@ -29,12 +30,13 @@ export default function Dashboard() {
       ) : (
         <div className="space-y-10">
           <KpiStrip />
-          <div className="grid gap-10 xl:grid-cols-[1fr_380px]">
-            <div>
-              <h2 className="mb-5 font-display text-xl font-semibold">Your meters</h2>
-              <NodeGrid />
-            </div>
-            <IncidentFeed />
+          <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+            <SiteMap />
+            <IncidentFeed limit={5} />
+          </div>
+          <div>
+            <h2 className="mb-5 font-display text-xl font-semibold">Your meters</h2>
+            <NodeGrid />
           </div>
         </div>
       )}
