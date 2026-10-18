@@ -38,13 +38,13 @@ function TwinPanel({ twin, nodeId }) {
   return (
     <div className="panel p-5" data-testid="twin-profile-panel">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-display text-base font-semibold">Digital Twin baseline</h3>
+        <h3 className="font-medium">Expected readings</h3>
         {isAdmin && <TwinEditorDialog nodeId={nodeId} twin={twin} />}
       </div>
       <dl className="space-y-2">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex justify-between border-b border-slate-800/60 pb-2 text-sm">
-            <dt className="text-slate-400">{k}</dt><dd className="font-mono text-cyan-200">{v}</dd>
+          <div key={k} className="flex justify-between border-b border-[#252b36] pb-2 text-sm">
+            <dt className="text-slate-400">{k}</dt><dd className="tabular-nums text-slate-100">{v}</dd>
           </div>
         ))}
       </dl>
@@ -74,48 +74,48 @@ export default function NodeDetail() {
 
   return (
     <div data-testid="node-detail-page">
-      <Link to="/sites" className="mb-4 inline-flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-200" data-testid="node-back-link">
-        <ArrowLeft className="h-3 w-3" /> Sites & nodes
+      <Link to="/sites" className="mb-4 inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-100" data-testid="node-back-link">
+        <ArrowLeft className="h-3.5 w-3.5" /> Sites and meters
       </Link>
-      <div className="rise mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="rise mb-8 flex flex-col gap-4 border-b border-[#252b36] pb-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-cyan-300/80">{site?.name} · {node.device_eui}</p>
-          <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight sm:text-4xl" data-testid="node-title">{node.label}</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl" data-testid="node-title">{node.label}</h1>
+          <p className="mt-2 text-sm text-slate-400">{site?.name} · device {node.device_eui}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-slate-400">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
           <NodeStatus status={node.status} testid="node-detail-status" />
-          <span className="flex items-center gap-1"><Battery className="h-3.5 w-3.5" />{num(node.battery_pct, 0)}%</span>
-          <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{timeAgo(node.last_ping)}</span>
+          <span className="flex items-center gap-1"><Battery className="h-4 w-4" />{num(node.battery_pct, 0)}%</span>
+          <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Last reading {timeAgo(node.last_ping)}</span>
         </div>
       </div>
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
         <div className="grid gap-4 md:grid-cols-2">
-          <TelemetryChart title="Line pressure" unit="bar" color="#38BDF8" data={series.p} testid="chart-pressure"
+          <TelemetryChart title="Pressure" unit="bar" color="#7dd3fc" data={series.p} testid="chart-pressure"
             band={twin ? [ep * (1 - tol), ep * (1 + tol)] : null} current={num(last?.pressure_bar, 2)}
-            refs={twin ? [{ y: ep * 0.7, label: "burst 70%", color: "#EF4444" }] : []} />
-          <TelemetryChart title="Flow rate" unit="m³/h" color="#00E5FF" data={series.f} testid="chart-flow"
+            refs={twin ? [{ y: ep * 0.7, label: "burst level", color: "#EF4444" }] : []} />
+          <TelemetryChart title="Flow" unit="m³/h" color="#a5b4fc" data={series.f} testid="chart-flow"
             band={twin ? [ef * (1 - tol), ef * (1 + tol)] : null} current={num(last?.flow_m3h, 1)}
-            refs={twin ? [{ y: ef * 1.25, label: "125%", color: "#F59E0B" }] : []} />
-          <TelemetryChart title="Reservoir level" unit="%" color="#10B981" data={series.r} testid="chart-reservoir" current={num(last?.reservoir_pct, 0)}
-            refs={twin ? [{ y: Number(twin.min_reservoir_pct), label: "min", color: "#F59E0B" }] : []} />
-          <TelemetryChart title={`Pump power · ${last ? (last.pump_active ? "running" : "TRIPPED") : "--"}`} unit="kW" color="#F59E0B"
+            refs={twin ? [{ y: ef * 1.25, label: "too high", color: "#F59E0B" }] : []} />
+          <TelemetryChart title="Reservoir" unit="%" color="#6ee7b7" data={series.r} testid="chart-reservoir" current={num(last?.reservoir_pct, 0)}
+            refs={twin ? [{ y: Number(twin.min_reservoir_pct), label: "minimum", color: "#F59E0B" }] : []} />
+          <TelemetryChart title={`Pump power${last ? (last.pump_active ? " · running" : " · stopped") : ""}`} unit="kW" color="#fcd34d"
             data={series.w} testid="chart-power" current={num(last?.pump_power_kw, 1)} />
         </div>
         <div className="space-y-6">
           <TwinPanel twin={twin} nodeId={nodeId} />
           {canOperate && (
             <div className="panel p-5" data-testid="node-scenario-panel">
-              <h3 className="mb-1 font-display text-base font-semibold">Inject a scenario</h3>
-              <p className="mb-4 text-xs text-slate-500">Sends an anomalous reading through the Digital Twin trigger.</p>
+              <h3 className="mb-1 font-medium">Test a scenario</h3>
+              <p className="mb-4 text-sm text-slate-500">Sends a fake fault reading so you can see how alerts behave.</p>
               <ScenarioButtons nodeId={nodeId} />
             </div>
           )}
           <div className="panel p-5" data-testid="node-incidents-panel">
-            <h3 className="mb-3 font-display text-base font-semibold">Incident history</h3>
-            {nodeIncidents.length === 0 ? <p className="text-xs text-slate-500">No incidents recorded.</p> : (
+            <h3 className="mb-3 font-medium">Past incidents</h3>
+            {nodeIncidents.length === 0 ? <p className="text-sm text-slate-500">Nothing has gone wrong here yet.</p> : (
               <ul className="space-y-3">
                 {nodeIncidents.map((i) => (
-                  <li key={i.id} className="border-b border-slate-800/60 pb-3 text-sm">
+                  <li key={i.id} className="border-b border-[#252b36] pb-3 text-sm">
                     <div className="flex items-center gap-2"><SeverityBadge severity={i.severity} /><CategoryTag category={i.category} />
                       <span className="ml-auto"><IncidentStatusBadge status={i.status} /></span></div>
                     <p className="mt-1 text-xs text-slate-400">{timeAgo(i.created_at)} · {zar(i.hourly_financial_loss_zar)}/h</p>

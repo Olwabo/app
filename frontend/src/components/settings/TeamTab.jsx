@@ -85,7 +85,7 @@ export default function TeamTab() {
         {team.map((m) => (
           <div key={m.id} className="flex flex-wrap items-center gap-4 p-4" data-testid={`team-member-${m.email}`}>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold">{m.full_name} {m.id === profile.id && <span className="text-xs text-cyan-300">(you)</span>}</p>
+              <p className="font-medium">{m.full_name} {m.id === profile.id && <span className="text-xs text-slate-400">(you)</span>}</p>
               <p className="truncate text-xs text-slate-500">{m.email}</p>
             </div>
             <RoleSelect value={m.role} disabled={!isAdmin || m.id === profile.id} testid={`member-role-${m.email}`}

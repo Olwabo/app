@@ -30,17 +30,17 @@ export default function AlertsTab() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="panel flex items-start gap-4 p-6">
-        <MonitorSmartphone className="mt-0.5 h-5 w-5 text-cyan-300" />
+        <MonitorSmartphone className="mt-0.5 h-5 w-5 text-slate-400" />
         <div>
-          <p className="font-semibold">Live in-app alerts</p>
-          <p className="text-sm text-slate-400">Always on. Every new incident appears instantly in the feed and as a pop-up for everyone signed in.</p>
+          <p className="font-medium">Alerts in the app</p>
+          <p className="text-sm text-slate-400">Always on. Anyone signed in sees new incidents straight away as a pop-up.</p>
         </div>
       </div>
       <div className="panel flex items-start gap-4 p-6" data-testid="email-alerts-panel">
         <BellRing className="mt-0.5 h-5 w-5 text-red-400" />
         <div className="flex-1">
-          <p className="font-semibold">Email for critical incidents</p>
-          <p className="text-sm text-slate-400">Pipe bursts and pump trips are emailed to every organization admin within ~15 seconds.</p>
+          <p className="font-medium">Email me about serious problems</p>
+          <p className="text-sm text-slate-400">Burst pipes and stopped pumps are emailed to every admin, usually within a minute.</p>
         </div>
         <Switch checked={!!email} disabled={!isAdmin || email === null} onCheckedChange={toggle} data-testid="email-alerts-switch" />
       </div>

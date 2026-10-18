@@ -38,7 +38,7 @@ export const SEVERITY_STYLE = {
 
 export const INCIDENT_STATUS_STYLE = {
   ACTIVE: "border-red-500/40 text-red-400",
-  DISPATCHED: "border-cyan-400/40 text-cyan-300",
+  DISPATCHED: "border-sky-300/40 text-sky-300",
   RESOLVED: "border-emerald-500/40 text-emerald-400",
 };
 

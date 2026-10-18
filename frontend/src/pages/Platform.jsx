@@ -22,7 +22,7 @@ function CreateOrg({ onCreated }) {
     setSaving(true);
     try {
       await api.post("/platform/orgs", { ...f, tariff_zar_per_kl: Number(f.tariff_zar_per_kl) });
-      toast.success(`${f.name} onboarded — admin can sign in now`);
+      toast.success(`${f.name} added. Their admin can sign in now.`);
       setF(EMPTY);
       setOpen(false);
       onCreated();
@@ -41,9 +41,9 @@ function CreateOrg({ onCreated }) {
   );
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild><Button className="gap-2" data-testid="create-org-btn"><Plus className="h-4 w-4" /> Onboard organization</Button></DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-slate-800 bg-[#0B1220]" data-testid="create-org-dialog">
-        <DialogHeader><DialogTitle className="font-display">Onboard a new tenant</DialogTitle></DialogHeader>
+      <DialogTrigger asChild><Button className="gap-2" data-testid="create-org-btn"><Plus className="h-4 w-4" /> Add organization</Button></DialogTrigger>
+      <DialogContent className="max-h-[90vh] overflow-y-auto border-[#252b36] bg-[#151a22]" data-testid="create-org-dialog">
+        <DialogHeader><DialogTitle className="font-display">Add an organization</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           {field("name", "Organization name")}
           <div className="grid gap-4 sm:grid-cols-2">
@@ -54,11 +54,11 @@ function CreateOrg({ onCreated }) {
               </Select></div>
             {field("tariff_zar_per_kl", "Tariff (R/kL)", "number")}
           </div>
-          <p className="pt-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">First org admin</p>
+          <p className="pt-2 text-sm font-medium text-slate-300">Their first admin</p>
           {field("admin_full_name", "Full name")}
           {field("admin_email", "Email", "email")}
           {field("admin_password", "Temporary password (min 8)", "password")}
-          <DialogFooter><Button type="submit" disabled={saving} data-testid="org-create-submit-btn">{saving ? "Creating…" : "Create tenant"}</Button></DialogFooter>
+          <DialogFooter><Button type="submit" disabled={saving} data-testid="org-create-submit-btn">{saving ? "Creating…" : "Add organization"}</Button></DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
@@ -73,26 +73,26 @@ export default function Platform() {
   }, [load]);
   return (
     <div data-testid="platform-page">
-      <PageHeader eyebrow="Platform owner" title="Tenants"><CreateOrg onCreated={load} /></PageHeader>
+      <PageHeader eyebrow="Every organization using AmanziAlert. Only you can see this page." title="Organizations"><CreateOrg onCreated={load} /></PageHeader>
       <div className="panel overflow-x-auto">
         <Table data-testid="platform-orgs-table">
           <TableHeader>
-            <TableRow className="border-slate-800 hover:bg-transparent">
-              {["Organization", "Sector", "Tariff", "Sites", "Nodes", "Users", "Open incidents", "Created"].map((h) => (
-                <TableHead key={h} className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{h}</TableHead>
+            <TableRow className="border-[#252b36] hover:bg-transparent">
+              {["Organization", "Sector", "Tariff", "Sites", "Meters", "Users", "Open incidents", "Joined"].map((h) => (
+                <TableHead key={h} className="text-xs font-medium text-slate-400">{h}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {orgs.map((o) => (
-              <TableRow key={o.id} className="border-slate-800 hover:bg-slate-800/40" data-testid={`platform-org-${o.id}`}>
-                <TableCell className="font-semibold">{o.name}</TableCell>
+              <TableRow key={o.id} className="border-[#252b36] hover:bg-[#1a2029]" data-testid={`platform-org-${o.id}`}>
+                <TableCell className="font-medium">{o.name}</TableCell>
                 <TableCell className="text-slate-400">{SECTOR_LABEL[o.sector]}</TableCell>
-                <TableCell className="font-mono">R {Number(o.tariff_zar_per_kl).toFixed(2)}</TableCell>
-                <TableCell className="font-mono">{o.site_count}</TableCell>
-                <TableCell className="font-mono">{o.node_count}</TableCell>
-                <TableCell className="font-mono">{o.user_count}</TableCell>
-                <TableCell className={`font-mono ${o.open_incidents > 0 ? "text-red-400" : "text-emerald-400"}`}>{o.open_incidents}</TableCell>
+                <TableCell className="tabular-nums">R {Number(o.tariff_zar_per_kl).toFixed(2)}</TableCell>
+                <TableCell className="tabular-nums">{o.site_count}</TableCell>
+                <TableCell className="tabular-nums">{o.node_count}</TableCell>
+                <TableCell className="tabular-nums">{o.user_count}</TableCell>
+                <TableCell className={`tabular-nums ${o.open_incidents > 0 ? "text-red-400" : "text-slate-400"}`}>{o.open_incidents}</TableCell>
                 <TableCell className="text-xs text-slate-500">{dateTime(o.created_at)}</TableCell>
               </TableRow>
             ))}

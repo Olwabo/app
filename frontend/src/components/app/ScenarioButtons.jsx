@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { api, errMsg } from "@/lib/api";
 
 export const SCENARIOS = [
-  { id: "PIPE_BURST", label: "Pipe burst", icon: Zap, tone: "hover:border-red-500/60 hover:bg-red-500/10",
-    rule: "Pressure < 70% of twin AND flow > 125% of twin", result: "CRITICAL · PIPE_BURST" },
-  { id: "MICRO_LEAK", label: "Micro leak", icon: Waves, tone: "hover:border-amber-500/60 hover:bg-amber-500/10",
-    rule: "Pressure < 85% of twin with flow ≤ twin", result: "MEDIUM · MICRO_LEAK" },
-  { id: "PUMP_TRIP", label: "Pump trip / load shedding", icon: PowerOff, tone: "hover:border-red-500/60 hover:bg-red-500/10",
-    rule: "Pump inactive AND flow < 5 m³/h", result: "CRITICAL · PUMP_TRIP_POWER" },
+  { id: "PIPE_BURST", label: "Burst pipe", icon: Zap, tone: "hover:border-red-400/50",
+    rule: "Pressure falls hard while flow jumps well above normal.", result: "Opens a critical incident" },
+  { id: "MICRO_LEAK", label: "Slow leak", icon: Waves, tone: "hover:border-amber-400/50",
+    rule: "Pressure sags even though nobody is drawing extra water.", result: "Opens a warning" },
+  { id: "PUMP_TRIP", label: "Pump stops / power cut", icon: PowerOff, tone: "hover:border-red-400/50",
+    rule: "The pump stops and flow drops to almost nothing.", result: "Opens a critical incident" },
 ];
 
 export default function ScenarioButtons({ nodeId, onInjected, layout = "stack" }) {
@@ -19,8 +19,8 @@ export default function ScenarioButtons({ nodeId, onInjected, layout = "stack" }
     setBusy(scenario);
     try {
       const { data } = await api.post("/simulate", { node_id: nodeId, scenario });
-      toast.success("Anomaly injected into telemetry stream", {
-        description: data.incident ? `Twin engine opened: ${data.incident.title}` : "Reading inserted",
+      toast.success("Test reading sent", {
+        description: data.incident ? `Opened: ${data.incident.title}` : "No incident was opened",
       });
       onInjected?.(scenario, data);
     } catch (e) {
@@ -33,12 +33,12 @@ export default function ScenarioButtons({ nodeId, onInjected, layout = "stack" }
     <div className={layout === "grid" ? "grid gap-3 md:grid-cols-3" : "flex flex-col gap-2"}>
       {SCENARIOS.map(({ id, label, icon: Icon, tone, rule, result }) => (
         <Button key={id} variant="outline" disabled={!nodeId || !!busy} onClick={() => run(id)} data-testid={`inject-${id.toLowerCase()}-btn`}
-          className={`h-auto justify-start gap-3 whitespace-normal border-slate-700 bg-slate-950/40 px-4 py-3 text-left transition-colors duration-200 ${tone}`}>
+          className={`h-auto justify-start gap-3 whitespace-normal border-[#2d3440] bg-[#11161d] px-4 py-3 text-left hover:bg-[#1a2029] ${tone}`}>
           {busy === id ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <Icon className="h-4 w-4 shrink-0 text-slate-300" />}
           <span className="flex flex-col">
-            <span className="text-sm font-semibold text-slate-100">{label}</span>
-            {layout === "grid" && <span className="mt-1 text-xs font-normal text-slate-400">{rule}</span>}
-            {layout === "grid" && <span className="mt-1 font-mono text-[10px] text-cyan-300/80">→ {result}</span>}
+            <span className="text-sm font-medium text-slate-100">{label}</span>
+            {layout === "grid" && <span className="mt-1 text-sm font-normal text-slate-400">{rule}</span>}
+            {layout === "grid" && <span className="mt-2 text-xs text-slate-500">{result}</span>}
           </span>
         </Button>
       ))}

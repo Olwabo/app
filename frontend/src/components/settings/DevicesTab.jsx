@@ -22,7 +22,7 @@ export default function DevicesTab() {
       const { data } = await api.post("/org/ingest-key");
       setFresh(data.api_key);
       load();
-      toast.success("New ingest key generated — copy it now");
+      toast.success("New key created. Copy it now, it won't be shown again.");
     } catch (e) {
       toast.error(errMsg(e));
     }
@@ -38,11 +38,11 @@ export default function DevicesTab() {
     <div className="max-w-3xl space-y-6">
       <div className="panel p-6" data-testid="ingest-key-panel">
         <div className="flex items-start gap-4">
-          <KeyRound className="mt-0.5 h-5 w-5 text-cyan-300" />
+          <KeyRound className="mt-0.5 h-5 w-5 text-slate-400" />
           <div className="flex-1">
-            <p className="font-semibold">Gateway ingest key</p>
+            <p className="font-medium">Meter connection key</p>
             <p className="text-sm text-slate-400" data-testid="ingest-key-status">
-              {!info ? "Loading…" : info.exists ? `Active key ${info.key_prefix}… created ${dateTime(info.created_at)}` : "No key yet. Generate one for your ESP32 / Modbus gateways."}
+              {!info ? "Loading…" : info.exists ? `Key starting ${info.key_prefix}…, created ${dateTime(info.created_at)}` : "You don't have a key yet. Create one to connect your ESP32 or Modbus gateways."}
             </p>
           </div>
           <ConfirmButton testid="rotate-ingest-key-btn" disabled={!info} title={info?.exists ? "Rotate ingest key?" : "Generate ingest key?"}
@@ -58,11 +58,11 @@ export default function DevicesTab() {
       </div>
       <div className="panel p-6">
         <div className="mb-3 flex items-center justify-between">
-          <p className="font-semibold">Send a reading</p>
+          <p className="font-medium">Example: send one reading</p>
           <Button size="sm" variant="ghost" className="gap-1 text-xs" onClick={() => copy(curl)} data-testid="copy-curl-btn"><Copy className="h-3.5 w-3.5" /> Copy</Button>
         </div>
-        <pre className="overflow-x-auto rounded-sm bg-slate-950 p-4 text-xs leading-relaxed text-cyan-100" data-testid="ingest-curl-example">{curl}</pre>
-        <p className="mt-3 text-xs text-slate-500">The device_eui must match a node registered under Sites & Nodes. Each reading runs through the Digital Twin trigger.</p>
+        <pre className="overflow-x-auto rounded-md bg-[#0d1117] p-4 font-mono text-xs leading-relaxed text-slate-300" data-testid="ingest-curl-example">{curl}</pre>
+        <p className="mt-3 text-sm text-slate-500">The device_eui must match a meter's device ID under Sites and meters.</p>
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ function FormDialog({ title, trigger, fields, onSubmit, testid, extra }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="border-slate-800 bg-[#0B1220]" data-testid={`${testid}-dialog`}>
+      <DialogContent className="border-[#252b36] bg-[#151a22]" data-testid={`${testid}-dialog`}>
         <DialogHeader><DialogTitle className="font-display">{title}</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           {extra?.(form, setForm)}
@@ -65,7 +65,7 @@ export default function Sites() {
     if (!f.site_id) throw new Error("Choose a site");
     await api.post("/nodes", { site_id: f.site_id, device_eui: f.device_eui, label: f.label });
     await refresh();
-    toast.success("Node registered with a default Digital Twin profile");
+    toast.success("Meter added. Adjust its expected readings on the meter page.");
   };
   const del = async (path, msg) => {
     try {
@@ -86,18 +86,18 @@ export default function Sites() {
     </div>
   );
   const btn = (label, id) => (
-    <Button variant="outline" className="gap-2 border-slate-700 hover:bg-cyan-400 hover:text-slate-950" data-testid={id}><Plus className="h-4 w-4" />{label}</Button>
+    <Button variant="outline" className="gap-2 border-[#2d3440] bg-transparent" data-testid={id}><Plus className="h-4 w-4" />{label}</Button>
   );
 
   return (
     <div data-testid="sites-page">
-      <PageHeader eyebrow="Facilities & gateways" title="Sites & nodes">
+      <PageHeader eyebrow="The places you monitor and the meters installed at each one." title="Sites and meters">
         {isAdmin && (
           <>
             <FormDialog title="Add site" testid="add-site" trigger={btn("Add site", "add-site-btn")} onSubmit={addSite}
               fields={[["name", "Site name"], ["location_label", "Location (town, province)"], ["latitude", "Latitude", "number", false], ["longitude", "Longitude", "number", false]]} />
-            <FormDialog title="Register sensor node" testid="add-node" trigger={btn("Add node", "add-node-btn")} onSubmit={addNode} extra={siteSelect}
-              fields={[["device_eui", "Device EUI (e.g. A84041000181F2B1)"], ["label", "Label"]]} />
+            <FormDialog title="Add a meter" testid="add-node" trigger={btn("Add meter", "add-node-btn")} onSubmit={addNode} extra={siteSelect}
+              fields={[["device_eui", "Device ID (printed on the gateway, e.g. A84041000181F2B1)"], ["label", "Name (e.g. Boiler room inlet)"]]} />
           </>
         )}
       </PageHeader>
@@ -105,9 +105,9 @@ export default function Sites() {
         {sites.map((site) => (
           <section key={site.id} className="panel rise p-5" data-testid={`site-panel-${site.id}`}>
             <div className="mb-4 flex flex-wrap items-center gap-3">
-              <h2 className="font-display text-lg font-semibold">{site.name}</h2>
-              <span className="font-mono text-xs text-slate-500">{site.location_label}</span>
-              {site.latitude && <span className="font-mono text-[10px] text-slate-600">{Number(site.latitude).toFixed(3)}, {Number(site.longitude).toFixed(3)}</span>}
+              <h2 className="font-display text-xl font-semibold">{site.name}</h2>
+              <span className="text-sm text-slate-500">{site.location_label}</span>
+              {site.latitude && <span className="text-xs text-slate-600">{Number(site.latitude).toFixed(3)}, {Number(site.longitude).toFixed(3)}</span>}
               {isAdmin && (
                 <ConfirmButton variant="ghost" size="sm" className="ml-auto gap-1 text-slate-500 hover:bg-red-500/10 hover:text-red-400" testid={`delete-site-${site.id}`}
                   title={`Delete ${site.name}?`} description="All nodes, telemetry and incidents at this site are permanently removed." confirmLabel="Delete site"
@@ -119,13 +119,13 @@ export default function Sites() {
                 <div key={n.id} className="relative">
                   <NodeCard node={n} />
                   {isAdmin && (
-                    <ConfirmButton variant="ghost" size="icon" className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-slate-700 bg-slate-900 text-slate-500 hover:bg-red-500/10 hover:text-red-400"
-                      testid={`delete-node-${n.device_eui}`} title={`Remove ${n.label}?`} description="Telemetry and incidents for this node are deleted." confirmLabel="Remove node"
-                      onConfirm={() => del(`/nodes/${n.id}`, "Node removed")}><Trash2 className="h-3 w-3" /></ConfirmButton>
+                    <ConfirmButton variant="ghost" size="icon" className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-[#2d3440] bg-[#151a22] text-slate-500 hover:bg-red-500/10 hover:text-red-400"
+                      testid={`delete-node-${n.device_eui}`} title={`Remove ${n.label}?`} description="Its readings and incidents are deleted too." confirmLabel="Remove meter"
+                      onConfirm={() => del(`/nodes/${n.id}`, "Meter removed")}><Trash2 className="h-3 w-3" /></ConfirmButton>
                   )}
                 </div>
               ))}
-              {!nodes.some((n) => n.site_id === site.id) && <p className="text-sm text-slate-500">No nodes registered at this site.</p>}
+              {!nodes.some((n) => n.site_id === site.id) && <p className="text-sm text-slate-500">No meters at this site yet.</p>}
             </div>
           </section>
         ))}

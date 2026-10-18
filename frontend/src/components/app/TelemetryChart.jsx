@@ -5,10 +5,10 @@ const TooltipBox = ({ active, payload, label, unit }) => {
   const v = payload.find((p) => p.dataKey === "value");
   const b = payload.find((p) => p.dataKey === "band");
   return (
-    <div className="rounded-sm border border-slate-700 bg-slate-950/95 px-3 py-2 font-mono text-[11px] shadow-xl">
+    <div className="rounded-md border border-[#2d3440] bg-[#11161d] px-3 py-2 text-xs shadow-lg">
       <p className="text-slate-500">{label}</p>
       {v && <p className="text-slate-100">{Number(v.value).toFixed(2)} {unit}</p>}
-      {b && <p className="text-cyan-300/80">twin {Number(b.value[0]).toFixed(2)}–{Number(b.value[1]).toFixed(2)}</p>}
+      {b && <p className="text-slate-400">expected {Number(b.value[0]).toFixed(2)}–{Number(b.value[1]).toFixed(2)}</p>}
     </div>
   );
 };
@@ -18,8 +18,8 @@ export default function TelemetryChart({ title, unit, data, color, band, refs = 
   return (
     <div className="panel p-4" data-testid={testid}>
       <div className="mb-3 flex items-baseline justify-between">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{title}</p>
-        <p className="font-mono text-xl font-bold tracking-tight" style={{ color }} data-testid={`${testid}-current`}>
+        <p className="text-sm text-slate-400">{title}</p>
+        <p className="text-xl font-semibold tabular-nums text-slate-50" data-testid={`${testid}-current`}>
           {current ?? "--"} <span className="text-xs text-slate-500">{unit}</span>
         </p>
       </div>
@@ -35,7 +35,7 @@ export default function TelemetryChart({ title, unit, data, color, band, refs = 
             <XAxis dataKey="t" tickLine={false} axisLine={false} minTickGap={40} />
             <YAxis tickLine={false} axisLine={false} domain={["auto", "auto"]} width={60} />
             <Tooltip content={<TooltipBox unit={unit} />} />
-            {band && <Area dataKey="band" stroke="#00E5FF" strokeOpacity={0.35} strokeDasharray="4 4" fill="rgba(56,189,248,0.12)" isAnimationActive={false} />}
+            {band && <Area dataKey="band" stroke="none" fill="rgba(148,163,184,0.10)" isAnimationActive={false} />}
             {refs.map((r) => (
               <ReferenceLine key={r.label} y={r.y} stroke={r.color} strokeDasharray="3 3" label={{ value: r.label, position: "insideTopRight", fill: r.color, fontSize: 9 }} />
             ))}

@@ -11,24 +11,28 @@ import IncidentFeed from "@/components/app/IncidentFeed";
 
 export default function Dashboard() {
   const { loading, org } = useOrgData();
-  const { canOperate } = useAuth();
+  const { canOperate, profile } = useAuth();
+  const h = new Date().getHours();
+  const hello = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+  const today = new Date().toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" });
+  const tariff = org ? ` · Water billed at R ${Number(org.tariff_zar_per_kl).toFixed(2)} per kL` : "";
   return (
     <div data-testid="dashboard-page">
-      <PageHeader eyebrow={org ? `${org.name} · tariff R ${Number(org.tariff_zar_per_kl).toFixed(2)}/kL` : "Loading"} title="Command Center">
+      <PageHeader eyebrow={`${today}${tariff}`} title={/owner|demo/i.test(profile.full_name) ? hello : `${hello}, ${profile.full_name.split(" ")[0]}`}>
         {canOperate && (
-          <Button asChild variant="outline" className="gap-2 border-slate-700 hover:bg-cyan-400 hover:text-slate-950" data-testid="dashboard-simulator-link">
-            <Link to="/simulator"><FlaskConical className="h-4 w-4" /> Run a scenario</Link>
+          <Button asChild variant="outline" className="gap-2 border-[#2d3440] bg-transparent" data-testid="dashboard-simulator-link">
+            <Link to="/simulator"><FlaskConical className="h-4 w-4" /> Test a scenario</Link>
           </Button>
         )}
       </PageHeader>
       {loading ? (
-        <div className="grid gap-4 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32 bg-slate-800/60" />)}</div>
+        <div className="grid gap-4 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28 bg-[#151a22]" />)}</div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-10">
           <KpiStrip />
-          <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
-            <div className="panel p-5">
-              <h2 className="mb-5 font-display text-base font-semibold">Network nodes</h2>
+          <div className="grid gap-10 xl:grid-cols-[1fr_380px]">
+            <div>
+              <h2 className="mb-5 font-display text-xl font-semibold">Your meters</h2>
               <NodeGrid />
             </div>
             <IncidentFeed />

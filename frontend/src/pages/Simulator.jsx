@@ -21,14 +21,14 @@ export default function Simulator() {
 
   return (
     <div data-testid="simulator-page">
-      <PageHeader eyebrow="Demo & commissioning" title="Scenario simulator" />
+      <PageHeader eyebrow="Send a fake fault to a meter to check that alerts, emails and the incident board work." title="Test scenarios" />
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           <div className="panel p-5">
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">1 · Target node</p>
+            <p className="mb-3 font-medium">1. Pick a meter</p>
             <Select value={nodeId} onValueChange={setNodeId}>
-              <SelectTrigger className="max-w-md border-slate-700 bg-slate-950/60" data-testid="simulator-node-select">
-                <SelectValue placeholder="Choose a sensor node" />
+              <SelectTrigger className="max-w-md border-[#2d3440] bg-[#11161d]" data-testid="simulator-node-select">
+                <SelectValue placeholder="Choose a meter" />
               </SelectTrigger>
               <SelectContent>
                 {nodes.map((n) => (
@@ -39,32 +39,32 @@ export default function Simulator() {
               </SelectContent>
             </Select>
             {node && (
-              <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-xs text-slate-400" data-testid="simulator-node-summary">
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-400" data-testid="simulator-node-summary">
                 <NodeStatus status={node.status} testid="simulator-node-status" />
-                <span>twin {num(twin?.expected_pressure_bar, 2)} bar / {num(twin?.expected_flow_m3h, 1)} m³/h</span>
-                <span className="text-slate-200">now {num(t?.pressure_bar, 2)} bar / {num(t?.flow_m3h, 1)} m³/h</span>
-                <Link to={`/nodes/${node.id}`} className="text-cyan-300 hover:text-cyan-100" data-testid="simulator-open-node-link">Open live charts →</Link>
+                <span>Normally {num(twin?.expected_pressure_bar, 2)} bar, {num(twin?.expected_flow_m3h, 1)} m³/h</span>
+                <span className="text-slate-200">Right now {num(t?.pressure_bar, 2)} bar, {num(t?.flow_m3h, 1)} m³/h</span>
+                <Link to={`/nodes/${node.id}`} className="text-sky-300 hover:underline" data-testid="simulator-open-node-link">Watch the charts</Link>
               </div>
             )}
           </div>
           <div className="panel p-5">
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">2 · Inject anomaly</p>
+            <p className="mb-4 font-medium">2. Choose what goes wrong</p>
             {canOperate ? <ScenarioButtons nodeId={nodeId} layout="grid" onInjected={onInjected} />
-              : <p className="text-sm text-slate-400">Viewers cannot run scenarios.</p>}
-            <p className="mt-4 text-xs text-slate-500">
-              Simulated nodes (SIM-*) keep streaming the anomaly until the incident is resolved. For real gateways one anomalous reading is inserted.
+              : <p className="text-sm text-slate-400">Your account can view only, so you can't run tests.</p>}
+            <p className="mt-4 text-sm text-slate-500">
+              Demo meters (SIM-…) keep showing the fault until you resolve the incident. Real meters get a single test reading.
             </p>
           </div>
         </div>
         <div className="panel p-5" data-testid="simulator-log">
-          <h3 className="mb-3 font-display text-base font-semibold">Injection log</h3>
-          {log.length === 0 ? <p className="text-xs text-slate-500">Nothing injected this session.</p> : (
-            <ul className="space-y-3 font-mono text-xs">
+          <h3 className="mb-3 font-medium">What you've tested</h3>
+          {log.length === 0 ? <p className="text-sm text-slate-500">Nothing yet this session.</p> : (
+            <ul className="space-y-3 text-sm">
               {log.map((l) => (
-                <li key={l.at} className="border-b border-slate-800/60 pb-2">
-                  <p className="text-slate-500">{clock(l.at)} · {l.scenario}</p>
+                <li key={l.at} className="border-b border-[#252b36] pb-2">
+                  <p className="text-xs text-slate-500">{clock(l.at)}</p>
                   <p className="text-slate-200">{l.node}</p>
-                  <p className="text-cyan-300/80">{l.incident ? `→ ${l.incident}` : "→ reading inserted"}</p>
+                  <p className="text-slate-400">{l.incident || "Reading sent, no incident"}</p>
                 </li>
               ))}
             </ul>
