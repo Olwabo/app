@@ -8,7 +8,7 @@ import { NodeStatus, CategoryTag, IncidentStatusBadge, SeverityBadge } from "@/c
 import TelemetryChart from "@/components/app/TelemetryChart";
 import TwinEditorDialog from "@/components/app/TwinEditorDialog";
 import ScenarioButtons from "@/components/app/ScenarioButtons";
-import { clock, num, timeAgo, zar } from "@/lib/format";
+import { clock, num, timeAgo } from "@/lib/format";
 
 const MAX = 120;
 
@@ -118,7 +118,7 @@ export default function NodeDetail() {
                   <li key={i.id} className="border-b border-[#252b36] pb-3 text-sm">
                     <div className="flex items-center gap-2"><SeverityBadge severity={i.severity} /><CategoryTag category={i.category} />
                       <span className="ml-auto"><IncidentStatusBadge status={i.status} /></span></div>
-                    <p className="mt-1 text-xs text-slate-400">{timeAgo(i.created_at)} · {zar(i.hourly_financial_loss_zar)}/h</p>
+                    <p className="mt-1 text-xs text-slate-400">{timeAgo(i.created_at)} · {num(i.water_loss_rate_m3h, 1)} m³/h lost</p>
                   </li>
                 ))}
               </ul>

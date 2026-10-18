@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useOrgData } from "@/context/OrgDataContext";
 import { Logo } from "@/components/app/Screens";
-import { ROLE_LABEL, SECTOR_LABEL, zar } from "@/lib/format";
+import { num, ROLE_LABEL, SECTOR_LABEL } from "@/lib/format";
 
 const NAV = [
   { to: "/", label: "Overview", icon: LayoutDashboard, id: "dashboard" },
@@ -85,9 +85,9 @@ function TopBar() {
       </div>
       <div className="ml-auto flex items-center gap-5 text-sm">
         <span className="hidden items-center gap-1.5 text-slate-400 sm:flex"><Activity className="h-4 w-4" />{kpis.online} of {kpis.total} meters reporting</span>
-        <span className={kpis.zarPerHour > 0 ? "font-medium text-red-300" : "text-slate-400"} data-testid="topbar-loss-rate">
-          {kpis.zarPerHour > 0 ? `Losing ${zar(kpis.zarPerHour)} an hour` : `${zar(0)}/h lost`}
-        </span>
+        {kpis.lossRate > 0 && (
+          <span className="font-medium text-amber-300" data-testid="topbar-loss-rate">Losing {num(kpis.lossRate, 1)} m³/h</span>
+        )}
       </div>
     </header>
   );

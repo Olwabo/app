@@ -120,7 +120,6 @@ async def send_email(*, to: str, subject: str, html: str) -> bool:
 
 def critical_incident_email(inc: dict) -> tuple[str, str]:
     subject = f"[{EMAIL_FROM_NAME}] CRITICAL: {inc['title']} at {inc['site_name']}"
-    loss = float(inc["hourly_financial_loss_zar"] or 0)
     rate = float(inc["water_loss_rate_m3h"] or 0)
     link = f"{APP_PUBLIC_URL}/incidents"
     html = (
@@ -132,7 +131,7 @@ def critical_incident_email(inc: dict) -> tuple[str, str]:
         f'<p style="margin:0 0 4px;color:#94A3B8">Site: <strong style="color:#F8FAFC">{escape(inc["site_name"])}</strong></p>'
         f'<p style="margin:0 0 12px;color:#94A3B8">Node: <strong style="color:#F8FAFC">{escape(inc["node_label"])}</strong></p>'
         f'<p style="margin:0 0 12px;color:#CBD5E1">{escape(inc["diagnosis"])}</p>'
-        f'<p style="margin:0 0 16px;color:#F59E0B">Water loss: {rate:.1f} m3/h &middot; Estimated cost: R {loss:,.2f} per hour</p>'
+        f'<p style="margin:0 0 16px;color:#F59E0B">Water loss: {rate:.1f} m3/h</p>'
         f'<p><a href="{link}" style="background:#00E5FF;color:#020617;padding:10px 18px;text-decoration:none;'
         'font-weight:bold;border-radius:4px">Open the incident board</a></p>'
         f'<p style="font-size:12px;color:#64748B;margin-top:24px">Sent by {escape(EMAIL_FROM_NAME)} because you are an '

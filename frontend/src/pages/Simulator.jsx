@@ -52,7 +52,7 @@ export default function Simulator() {
             {canOperate ? <ScenarioButtons nodeId={nodeId} layout="grid" onInjected={onInjected} />
               : <p className="text-sm text-slate-400">Your account can view only, so you can't run tests.</p>}
             <p className="mt-4 text-sm text-slate-500">
-              Demo meters (SIM-…) keep showing the fault until you resolve the incident. Real meters get a single test reading.
+              Simulated meters (SIM-…) keep showing the fault until you resolve the incident. Real meters get a single test reading.
             </p>
           </div>
         </div>

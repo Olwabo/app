@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/app/Screens";
 import { api, errMsg } from "@/lib/api";
 import { dateTime, SECTOR_LABEL } from "@/lib/format";
 
-const EMPTY = { sector: "MANUFACTURING", tariff_zar_per_kl: "42.50" };
+const EMPTY = { sector: "MANUFACTURING" };
 
 function CreateOrg({ onCreated }) {
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ function CreateOrg({ onCreated }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post("/platform/orgs", { ...f, tariff_zar_per_kl: Number(f.tariff_zar_per_kl) });
+      await api.post("/platform/orgs", f);
       toast.success(`${f.name} added. Their admin can sign in now.`);
       setF(EMPTY);
       setOpen(false);
@@ -46,14 +46,11 @@ function CreateOrg({ onCreated }) {
         <DialogHeader><DialogTitle className="font-display">Add an organization</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           {field("name", "Organization name")}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5"><Label className="text-xs text-slate-400">Sector</Label>
+          <div className="space-y-1.5"><Label className="text-xs text-slate-400">Sector</Label>
               <Select value={f.sector} onValueChange={(v) => setF({ ...f, sector: v })}>
                 <SelectTrigger data-testid="org-create-sector-select"><SelectValue /></SelectTrigger>
                 <SelectContent>{Object.entries(SECTOR_LABEL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
               </Select></div>
-            {field("tariff_zar_per_kl", "Tariff (R/kL)", "number")}
-          </div>
           <p className="pt-2 text-sm font-medium text-slate-300">Their first admin</p>
           {field("admin_full_name", "Full name")}
           {field("admin_email", "Email", "email")}
@@ -78,7 +75,7 @@ export default function Platform() {
         <Table data-testid="platform-orgs-table">
           <TableHeader>
             <TableRow className="border-[#252b36] hover:bg-transparent">
-              {["Organization", "Sector", "Tariff", "Sites", "Meters", "Users", "Open incidents", "Joined"].map((h) => (
+              {["Organization", "Sector", "Sites", "Meters", "Users", "Open incidents", "Joined"].map((h) => (
                 <TableHead key={h} className="text-xs font-medium text-slate-400">{h}</TableHead>
               ))}
             </TableRow>
@@ -88,7 +85,6 @@ export default function Platform() {
               <TableRow key={o.id} className="border-[#252b36] hover:bg-[#1a2029]" data-testid={`platform-org-${o.id}`}>
                 <TableCell className="font-medium">{o.name}</TableCell>
                 <TableCell className="text-slate-400">{SECTOR_LABEL[o.sector]}</TableCell>
-                <TableCell className="tabular-nums">R {Number(o.tariff_zar_per_kl).toFixed(2)}</TableCell>
                 <TableCell className="tabular-nums">{o.site_count}</TableCell>
                 <TableCell className="tabular-nums">{o.node_count}</TableCell>
                 <TableCell className="tabular-nums">{o.user_count}</TableCell>

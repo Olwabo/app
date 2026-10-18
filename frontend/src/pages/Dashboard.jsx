@@ -10,15 +10,14 @@ import NodeGrid from "@/components/app/NodeGrid";
 import IncidentFeed from "@/components/app/IncidentFeed";
 
 export default function Dashboard() {
-  const { loading, org } = useOrgData();
+  const { loading } = useOrgData();
   const { canOperate, profile } = useAuth();
   const h = new Date().getHours();
   const hello = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
   const today = new Date().toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" });
-  const tariff = org ? ` · Water billed at R ${Number(org.tariff_zar_per_kl).toFixed(2)} per kL` : "";
   return (
     <div data-testid="dashboard-page">
-      <PageHeader eyebrow={`${today}${tariff}`} title={/owner|demo/i.test(profile.full_name) ? hello : `${hello}, ${profile.full_name.split(" ")[0]}`}>
+      <PageHeader eyebrow={today} title={/owner|operator|viewer|admin/i.test(profile.full_name) ? hello : `${hello}, ${profile.full_name.split(" ")[0]}`}>
         {canOperate && (
           <Button asChild variant="outline" className="gap-2 border-[#2d3440] bg-transparent" data-testid="dashboard-simulator-link">
             <Link to="/simulator"><FlaskConical className="h-4 w-4" /> Test a scenario</Link>

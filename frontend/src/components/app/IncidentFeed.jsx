@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 import { useOrgData } from "@/context/OrgDataContext";
 import { CategoryTag, IncidentStatusBadge, SeverityBadge } from "@/components/app/Badges";
-import { isOpen, num, timeAgo, zar } from "@/lib/format";
+import { isOpen, num, timeAgo } from "@/lib/format";
 
 export default function IncidentFeed({ limit = 8 }) {
   const { incidents, nodes, sites } = useOrgData();
@@ -34,7 +34,6 @@ export default function IncidentFeed({ limit = 8 }) {
               <p className="text-xs text-slate-500">{siteOf(inc.site_id)?.name} · {nodeOf(inc.node_id)?.label}</p>
               <div className="mt-2 flex items-center gap-3 text-xs tabular-nums">
                 <span className="text-amber-400">{num(inc.water_loss_rate_m3h, 1)} m³/h</span>
-                <span className="text-red-400">{zar(inc.hourly_financial_loss_zar)}/h</span>
                 <span className="ml-auto"><IncidentStatusBadge status={inc.status} /></span>
               </div>
             </li>

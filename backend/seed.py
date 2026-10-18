@@ -12,10 +12,10 @@ logger = logging.getLogger("amanzi.seed")
 
 DEMO_ORGS = [
     {
-        "name": "Highveld Agro-Processing (Demo)", "sector": "MANUFACTURING", "tariff": 42.50,
+        "name": "Highveld Agro-Processing", "sector": "MANUFACTURING", "tariff": 42.50,
         "users": [("OWNER_EMAIL", "OWNER_PASSWORD", "Platform Owner", "ORG_ADMIN", True),
-                  ("HV_OPERATOR_EMAIL", "HV_OPERATOR_PASSWORD", "Highveld Operator (Demo)", "OPERATOR", False),
-                  ("HV_VIEWER_EMAIL", "HV_VIEWER_PASSWORD", "Highveld Viewer (Demo)", "VIEWER", False)],
+                  ("HV_OPERATOR_EMAIL", "HV_OPERATOR_PASSWORD", "Highveld Operator", "OPERATOR", False),
+                  ("HV_VIEWER_EMAIL", "HV_VIEWER_PASSWORD", "Highveld Viewer", "VIEWER", False)],
         "sites": [
             ("Main Processing Plant", "Middelburg, Mpumalanga", -25.775, 29.464, [
                 ("SIM-HV-001", "Pump Station Inlet", 5.2, 85.0),
@@ -32,10 +32,10 @@ DEMO_ORGS = [
         ],
     },
     {
-        "name": "Msunduzi Water Utility (Demo)", "sector": "MUNICIPAL", "tariff": 28.90,
-        "users": [("DEMO_UTILITY_EMAIL", "DEMO_UTILITY_PASSWORD", "Utility Admin (Demo)", "ORG_ADMIN", False),
-                  ("MW_OPERATOR_EMAIL", "MW_OPERATOR_PASSWORD", "Msunduzi Operator (Demo)", "OPERATOR", False),
-                  ("MW_VIEWER_EMAIL", "MW_VIEWER_PASSWORD", "Msunduzi Viewer (Demo)", "VIEWER", False)],
+        "name": "Msunduzi Water Utility", "sector": "MUNICIPAL", "tariff": 28.90,
+        "users": [("DEMO_UTILITY_EMAIL", "DEMO_UTILITY_PASSWORD", "Msunduzi Admin", "ORG_ADMIN", False),
+                  ("MW_OPERATOR_EMAIL", "MW_OPERATOR_PASSWORD", "Msunduzi Operator", "OPERATOR", False),
+                  ("MW_VIEWER_EMAIL", "MW_VIEWER_PASSWORD", "Msunduzi Viewer", "VIEWER", False)],
         "sites": [
             ("Ward 12 Reservoir", "Pietermaritzburg, KwaZulu-Natal", -29.600, 30.379, [
                 ("SIM-MW-001", "Bulk Supply Meter", 5.5, 140.0),
@@ -77,6 +77,6 @@ async def seed():
                         await conn.execute(
                             "INSERT INTO digital_twin_profiles (node_id, expected_pressure_bar, expected_flow_m3h) VALUES ($1,$2,$3)",
                             nid, D(ep), D(ef))
-                logger.info("Seeded demo org %s", o["name"])
+                logger.info("Seeded org %s", o["name"])
             for ek, pk, name, role, platform in o["users"]:
                 await _ensure_user(conn, org_id, os.environ[ek], os.environ[pk], name, role, platform)

@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { hoursOpen, isOpen, zar } from "@/lib/format";
+import { isOpen, num } from "@/lib/format";
 
 const OrgCtx = createContext(null);
 
@@ -53,7 +53,7 @@ export function OrgDataProvider({ children }) {
     }
     const notify = (inc) => {
       const node = nodesRef.current.find((x) => x.id === inc.node_id);
-      const desc = `${node?.label ?? "Node"} · ${inc.hourly_financial_loss_zar > 0 ? `${zar(inc.hourly_financial_loss_zar)}/h at risk` : inc.diagnosis}`;
+      const desc = `${node?.label ?? "Node"} · ${inc.water_loss_rate_m3h > 0 ? `losing ${num(inc.water_loss_rate_m3h, 1)} m³/h` : inc.diagnosis}`;
       const fn = inc.severity === "CRITICAL" ? toast.error : toast.warning;
       fn(inc.title, { description: desc, duration: 8000 });
     };
@@ -95,8 +95,6 @@ export function OrgDataProvider({ children }) {
       open: open.length,
       critical: open.filter((i) => i.severity === "CRITICAL").length,
       lossRate: open.reduce((a, i) => a + Number(i.water_loss_rate_m3h || 0), 0),
-      zarPerHour: open.reduce((a, i) => a + Number(i.hourly_financial_loss_zar || 0), 0),
-      zarSoFar: open.reduce((a, i) => a + Number(i.hourly_financial_loss_zar || 0) * hoursOpen(i), 0),
       online: nodes.filter((n) => n.status !== "OFFLINE").length,
       total: nodes.length,
     };

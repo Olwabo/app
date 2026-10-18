@@ -58,7 +58,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-[#0d1117]/45" />
         <div className="absolute bottom-0 left-0 right-0 p-12">
           <p className="max-w-md font-display text-2xl leading-snug text-white">
-            Know about the burst before the floor floods, and what it's costing while you fix it.
+            Know about the burst before the floor floods, and see exactly where the water is going.
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { CategoryTag, IncidentStatusBadge, SeverityBadge } from "@/components/ap
 import DispatchDialog from "@/components/app/DispatchDialog";
 import ConfirmButton from "@/components/app/ConfirmButton";
 import { api, errMsg } from "@/lib/api";
-import { dateTime, hoursOpen, isOpen, num, zar } from "@/lib/format";
+import { dateTime, isOpen, num } from "@/lib/format";
 
 const FILTERS = [["open", "Needs attention"], ["ACTIVE", "Not assigned"], ["DISPATCHED", "Someone's on it"], ["RESOLVED", "Fixed"], ["all", "All"]];
 
@@ -58,17 +58,17 @@ export default function Incidents() {
         </TabsList>
       </Tabs>
       <div className="panel overflow-x-auto">
-        <Table className="min-w-[980px]" data-testid="incidents-table">
+        <Table className="min-w-[800px]" data-testid="incidents-table">
           <TableHeader>
             <TableRow className="border-[#252b36] hover:bg-transparent">
-              {["Severity", "What happened", "Where", "Water lost", "Cost per hour", "Cost so far", "Status", ""].map((h) => (
+              {["Severity", "What happened", "Where", "Water lost", "Status", ""].map((h) => (
                 <TableHead key={h} className="text-xs font-medium text-slate-400">{h}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.length === 0 && (
-              <TableRow><TableCell colSpan={8} className="py-10 text-center text-sm text-slate-500" data-testid="incidents-empty">Nothing here right now.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-slate-500" data-testid="incidents-empty">Nothing here right now.</TableCell></TableRow>
             )}
             {list.map((i) => (
               <TableRow key={i.id} className="border-[#252b36] hover:bg-[#1a2029]" data-testid={`incident-row-${i.id}`}>
@@ -84,8 +84,6 @@ export default function Incidents() {
                   <Link to={`/nodes/${i.node_id}`} className="text-sm text-sky-300 hover:underline">{nodeOf(i.node_id)?.label}</Link>
                 </TableCell>
                 <TableCell className="tabular-nums text-amber-400">{num(i.water_loss_rate_m3h, 1)} m³/h</TableCell>
-                <TableCell className="tabular-nums text-red-400">{zar(i.hourly_financial_loss_zar, 2)}</TableCell>
-                <TableCell className="tabular-nums text-slate-300">{zar(Number(i.hourly_financial_loss_zar) * hoursOpen(i), 2)}</TableCell>
                 <TableCell>
                   <IncidentStatusBadge status={i.status} testid={`incident-status-${i.id}`} />
                   {i.assigned_technician && <p className="mt-1 text-sm text-slate-400" data-testid={`incident-tech-${i.id}`}>With {i.assigned_technician}</p>}

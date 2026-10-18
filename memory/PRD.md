@@ -24,6 +24,10 @@ Platform owner (onboards tenants), Org admin (settings, team, twins, assets), Op
 - Restyle for a calmer, human feel: serif page headings with IBM Plex Sans body, muted dark palette, no grid, scanline or glow effects, plain-language labels (Overview, Sites and meters, Test scenarios, "Send someone", "Mark fixed"), time-of-day greeting, honest sign-in copy.
 - Added demo OPERATOR + VIEWER accounts for both tenants (seeded from env; see test_credentials.md). Iteration 2: 21/21 role/isolation tests passed, UI regression passed.
 
+## Update (2026-10-18, b)
+- Removed every Rand cost display: KPI tile, top bar, incident table columns, feed, toasts, alert email, tariff inputs in Settings and Platform, dashboard tariff line. The DB columns and trigger are unchanged (tariff stays at its stored value).
+- Removed "(Demo)" from org and user names in the DB and the seed; the simulator copy now says "Simulated meters".
+
 ## Backlog
 - P1: RESERVOIR_LOW and AFTER_HOURS_LEAK detection (twin fields exist, trigger doesn't use them yet)
 - P1: Tenant suspend/delete on Platform page; dual ingest keys for zero-downtime rotation
