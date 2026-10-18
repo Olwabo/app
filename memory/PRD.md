@@ -20,6 +20,10 @@ Platform owner (onboards tenants), Org admin (settings, team, twins, assets), Op
 - Login, Command Center (KPIs, node grid, live incident feed), Sites & Nodes CRUD, Node detail (4 live charts with twin bands, twin calibration, scenario injection), Incident board (filters, dispatch, resolve, ZAR cost so far), Scenario simulator, Settings (org/tariff, alerts toggle, ingest key + curl, team), Platform tenants page.
 - Tested: backend 34/34, frontend all flows; follow-up fixes applied (alerts toggle race, status severity guard, atomic email claim, reservoir seed, chart empty state/axis).
 
+## Update (2026-10-18)
+- Restyle for a calmer, human feel: serif page headings with IBM Plex Sans body, muted dark palette, no grid, scanline or glow effects, plain-language labels (Overview, Sites and meters, Test scenarios, "Send someone", "Mark fixed"), time-of-day greeting, honest sign-in copy.
+- Added demo OPERATOR + VIEWER accounts for both tenants (seeded from env; see test_credentials.md). Iteration 2: 21/21 role/isolation tests passed, UI regression passed.
+
 ## Backlog
 - P1: RESERVOIR_LOW and AFTER_HOURS_LEAK detection (twin fields exist, trigger doesn't use them yet)
 - P1: Tenant suspend/delete on Platform page; dual ingest keys for zero-downtime rotation

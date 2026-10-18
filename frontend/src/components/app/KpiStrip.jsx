@@ -17,7 +17,7 @@ export default function KpiStrip() {
   const hot = kpis.zarPerHour > 0;
   return (
     <div className="panel grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-[#252b36] [&>*]:xl:pl-6 [&>*:first-child]:xl:pl-1">
-      <Tile label="Open incidents" value={kpis.open} sub={kpis.open ? `${kpis.critical} need urgent attention` : "Nothing needs attention"} icon={AlertOctagon}
+      <Tile label="Open incidents" value={kpis.open} sub={!kpis.open ? "Nothing needs attention" : kpis.critical ? `${kpis.critical} urgent` : "None of them urgent"} icon={AlertOctagon}
         tone={kpis.critical ? "text-red-400" : kpis.open ? "text-amber-400" : "text-slate-50"} testid="kpi-open-incidents" delay={0} />
       <Tile label="Meters reporting" value={`${kpis.online}/${kpis.total}`} sub="Sent a reading in the last 10 min" icon={Radio}
         tone="text-slate-50" testid="kpi-nodes-online" delay={40} />

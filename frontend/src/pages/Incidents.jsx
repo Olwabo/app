@@ -53,12 +53,12 @@ export default function Incidents() {
     <div data-testid="incidents-page">
       <PageHeader eyebrow="Every leak, burst and pump stop, from the moment it's detected until it's fixed." title="Incidents" />
       <Tabs value={filter} onValueChange={setFilter} className="mb-4">
-        <TabsList className="bg-[#151a22]">
+        <TabsList className="h-auto flex-wrap justify-start bg-[#151a22]">
           {FILTERS.map(([v, l]) => <TabsTrigger key={v} value={v} data-testid={`incident-filter-${v.toLowerCase()}`}>{l}</TabsTrigger>)}
         </TabsList>
       </Tabs>
       <div className="panel overflow-x-auto">
-        <Table data-testid="incidents-table">
+        <Table className="min-w-[980px]" data-testid="incidents-table">
           <TableHeader>
             <TableRow className="border-[#252b36] hover:bg-transparent">
               {["Severity", "What happened", "Where", "Water lost", "Cost per hour", "Cost so far", "Status", ""].map((h) => (

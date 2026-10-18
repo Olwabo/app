@@ -1,0 +1,29 @@
+{
+  "summary": "Iteration 2: role-account testing (OPERATOR/VIEWER for both tenants) plus a UI regression after the restyle. Backend: new test_roles.py, 21/21 passed. It covers login and /me role for all 6 demo accounts; tenant isolation (Msunduzi accounts see only SIM-MW-001/002, team lists scoped to the org); 403 for operators and viewers on POST /sites, PUT /nodes/{id}/twin, POST /team, POST /org/ingest-key; 403 for viewers on /simulate, /incidents/{id}/dispatch and /resolve; 404 when a Msunduzi operator simulates on a Highveld node; operator slow leak -> dispatch -> resolve with the node back to ONLINE; status guard (burst then slow leak keeps CRITICAL, resolving the burst -> WARNING, resolving the leak -> ONLINE), run on SIM-MW with the Msunduzi operator. Frontend (Playwright): owner login (bad-password error shown), KPIs, 6 node cards, Needs attention feed, Sites and meters with admin buttons, meter detail with 4 charts and edit-twin, incident filter labels exactly 'Needs attention/Not assigned/Someone's on it/Fixed/All', Test scenarios, all 4 Settings tabs, email alerts switch toggled off and on with no snap-back, Platform page (2 orgs). Highveld operator through the UI: no add-site/add-node/delete/edit-twin/Connect meters/add-member, alerts switch disabled, /platform redirects to /, ran a slow leak on SIM-HV-002 from Test scenarios, sent someone (Dispatched, 'With TEST_Tech Thabo'), marked fixed (shows under Fixed), meter back to Normal. Viewers (HV and MW): data and charts visible, zero inject/dispatch/resolve/admin controls, Test scenarios shows a view-only message. Msunduzi operator: only 2 MW cards, scenario buttons present, no admin controls. Mobile (390px): menu opens and navigates. No page JS errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Incidents (mobile 390px)", "issues": ["Table columns are squeezed ('Cost per hour' wraps across 3 lines) and the Status/action columns are cut off on the right; the filter tabs also overflow ('Fixed/All' hidden). Use a stacked card layout or a visible horizontal scroll on small screens."]},
+      {"screen": "Sites and meters (admin)", "issues": ["The per-meter trash icon sits on the card's top-right border, touching the status label; looks misplaced."]},
+      {"screen": "Test scenarios (viewer)", "issues": ["Viewers still see the meter picker and the footnote 'keep showing the fault until you resolve the incident', which isn't relevant to a view-only role (minor)."]},
+      {"screen": "Top bar", "issues": ["Toasts cover the top-right 'Losing R x an hour' indicator for a few seconds (minor)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_roles.py", "/app/test_reports/pytest/pytest_roles.xml"],
+  "action_items": [
+    "Optional: make the incidents table usable on mobile (cards or overflow-x scroll; scrollable filter tabs)",
+    "Optional: move the meter delete icon inside the card padding on Sites and meters"
+  ],
+  "critical_code_review_comments": [
+    "Role gating is consistent: backend ADMIN/OPS dependencies match the frontend isAdmin/canOperate guards.",
+    "Migration 003 trigger only blocks CRITICAL->WARNING; it does not stop CRITICAL->ONLINE while a critical incident is open (e.g. a normal simulator reading). The status guard test passed, so the simulator evidently doesn't do this, but the trigger could cover any downgrade for robustness."
+  ],
+  "updated_files": ["/app/backend/tests/test_roles.py"],
+  "success_rate": {"backend": "100% (21/21)", "frontend": "100% of tested flows"},
+  "seed_data_creation": "None. Created incidents: 1 MICRO_LEAK on SIM-HV-002 (UI, resolved), 1 MICRO_LEAK on SIM-HV-00x (API, resolved), 1 PIPE_BURST + 1 MICRO_LEAK on SIM-MW (resolved; the PIPE_BURST is critical and goes to the Msunduzi admins, not the owner). The pre-existing SIM-HV-003 incident was left untouched. Email alerts switch left ON.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run role tests with `cd /app/backend/tests && python -m pytest test_roles.py -n 0 -v`. They need a SIM-HV-001/002/004/005 node and a SIM-MW node with no open incidents. Each run sends 1 critical email to the Msunduzi org admins. The nav testid for Overview is nav-dashboard (not nav-overview). The simulator select option testid is simulator-node-option-<EUI>. The resolve confirm testid is resolve-btn-<id>-confirm."
+}

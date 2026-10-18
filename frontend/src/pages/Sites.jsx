@@ -116,12 +116,14 @@ export default function Sites() {
             </div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-3">
               {nodes.filter((n) => n.site_id === site.id).map((n) => (
-                <div key={n.id} className="relative">
+                <div key={n.id}>
                   <NodeCard node={n} />
                   {isAdmin && (
-                    <ConfirmButton variant="ghost" size="icon" className="absolute -right-2 -top-2 h-6 w-6 rounded-full border border-[#2d3440] bg-[#151a22] text-slate-500 hover:bg-red-500/10 hover:text-red-400"
+                    <div className="mt-1 flex justify-end">
+                    <ConfirmButton variant="ghost" size="sm" className="h-7 gap-1 px-2 text-xs text-slate-500 hover:bg-red-500/10 hover:text-red-400"
                       testid={`delete-node-${n.device_eui}`} title={`Remove ${n.label}?`} description="Its readings and incidents are deleted too." confirmLabel="Remove meter"
-                      onConfirm={() => del(`/nodes/${n.id}`, "Meter removed")}><Trash2 className="h-3 w-3" /></ConfirmButton>
+                      onConfirm={() => del(`/nodes/${n.id}`, "Meter removed")}><Trash2 className="h-3 w-3" /> Remove</ConfirmButton>
+                    </div>
                   )}
                 </div>
               ))}
